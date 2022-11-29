@@ -6,6 +6,12 @@ interface userItem {
   name?: string;
   email?: string;
   _id?: string;
+  createdAt?: Date;
+  followers?: [];
+  following?: [];
+  username?: string;
+  about?: string;
+  secret?: string;
 }
 
 type UserProps = {
