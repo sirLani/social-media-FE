@@ -43,6 +43,14 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
+                <Link
+                  className={`nav-link dropdown-item`}
+                  href="/user/profile/update"
+                >
+                  Profile
+                </Link>
+              </li>
+              <li>
                 <a onClick={logout} className="nav-link cursor-pointer ">
                   Logout
                 </a>
