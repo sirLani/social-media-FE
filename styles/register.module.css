@@ -1,0 +1,8 @@
+.bg_default_image {
+    background-image: url("/images/default.jpg");
+    background-size: 100%;
+    height: 150px;
+    text-shadow: 2px 2px 8px #000;
+  }
+  
+ 
