@@ -124,6 +124,18 @@ export default function Dashboard() {
     try {
       const { data } = await axios.put("/user-follow", { _id: user._id });
       console.log("handle follow response => ", data);
+      // update local storage, update user, keep token
+      let auth = JSON.parse(localStorage.getItem("auth") as string);
+      auth.user = data;
+      localStorage.setItem("auth", JSON.stringify(auth));
+      // update context
+      setState({ ...state, user: data });
+      // update people state
+      let filtered = people?.filter((p) => p._id !== user._id);
+      setPeople(filtered);
+      // rerender the posts in newsfeed
+      //  newsFeed();
+      toast.success(`Following ${user.name}`);
     } catch (err) {
       console.log(err);
     }
@@ -165,7 +177,7 @@ export default function Dashboard() {
                         {user.username}
                         <span
                           onClick={() => handleFollow(user)}
-                          className="text-primary pointer"
+                          className={`text-primary ${styles.pointer}`}
                         >
                           Follow
                         </span>
