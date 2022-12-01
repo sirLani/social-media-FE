@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useState, createContext, useEffect } from "react";
 import axios from "axios";
 
-interface userItem {
+export interface userItem {
   name?: string;
   email?: string;
   _id?: string;
@@ -12,10 +12,15 @@ interface userItem {
   username?: string;
   about?: string;
   secret?: string;
-  image?: string;
+  image?: IImage;
 }
 
-type UserProps = {
+export type IImage = {
+  url?: string;
+  public_id?: string;
+};
+
+export type UserProps = {
   user: userItem;
   token?: string;
 };

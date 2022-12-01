@@ -4,11 +4,12 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import CreatePostForm from "../../components/createPostForm";
 import UserRoute from "../../components/routes/routes";
-import { UserContext } from "../../context";
+import { UserContext, userItem } from "../../context";
 import styles from "../../styles/register.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/postList";
+import { Avatar, List } from "antd";
 
 interface IPosts {
   _id: string;
@@ -23,11 +24,17 @@ export default function Dashboard() {
 
   const [posts, setPosts] = useState([]);
 
+  // people
+  const [people, setPeople] = useState<userItem[]>();
+
   // route
   const router = useRouter();
 
   useEffect(() => {
-    if (state?.token) fetchUserPosts();
+    if (state?.token) {
+      fetchUserPosts();
+      findPeople();
+    }
   }, [state]);
 
   const fetchUserPosts = async () => {
@@ -39,6 +46,16 @@ export default function Dashboard() {
       console.log(err);
     }
   };
+
+  const findPeople = async () => {
+    try {
+      const { data } = await axios.get("/find-people");
+      setPeople(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const postSubmit = async (
     e: React.FormEvent<HTMLFormElement | HTMLButtonElement>
   ) => {
@@ -94,6 +111,23 @@ export default function Dashboard() {
     }
   };
 
+  const imageSource = (user: userItem) => {
+    if (user.image) {
+      return user.image.url;
+    } else {
+      return "/images/default.jpg";
+    }
+  };
+
+  const handleFollow = async (user: userItem) => {
+    // console.log("add this user to following list ", user);
+    try {
+      const { data } = await axios.put("/user-follow", { _id: user._id });
+      console.log("handle follow response => ", data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <UserRoute>
       <div className="container-fluid">
@@ -118,7 +152,30 @@ export default function Dashboard() {
             <br />
             <PostList posts={posts} handleDelete={handleDelete} />
           </div>
-          <div className="col-md-4">Sidebar</div>
+          <div className="col-md-4">
+            <List
+              itemLayout="horizontal"
+              dataSource={people}
+              renderItem={(user) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar src={imageSource(user)} />}
+                    title={
+                      <div className="d-flex justify-content-between">
+                        {user.username}
+                        <span
+                          onClick={() => handleFollow(user)}
+                          className="text-primary pointer"
+                        >
+                          Follow
+                        </span>
+                      </div>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </div>
         </div>
       </div>
     </UserRoute>
