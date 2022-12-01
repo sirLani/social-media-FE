@@ -9,7 +9,7 @@ import { SyncOutlined } from "@ant-design/icons";
 import styles from "../../../styles/register.module.css";
 
 const ProfileUpdate = () => {
-  const [state] = useContext(UserContext);
+  const [state, setState] = useContext(UserContext);
   const [form, setForm] = useState({
     password: "",
     email: state?.user.email as string,
@@ -46,8 +46,13 @@ const ProfileUpdate = () => {
         toast.error(data.error);
         setLoading(false);
       } else {
-        setOK(data.ok);
-
+        // update local storage, update user, keep token
+        let auth = JSON.parse(localStorage.getItem("auth") as string);
+        auth.user = data;
+        localStorage.setItem("auth", JSON.stringify(auth));
+        // update context
+        setState({ ...state, user: data });
+        setOK(true);
         setLoading(false);
       }
     } catch (err: any) {
@@ -167,16 +172,7 @@ const ProfileUpdate = () => {
                 </div>
 
                 <div className="form-group p-2">
-                  <button
-                    disabled={
-                      !form.name ||
-                      !form.email ||
-                      !form.secret ||
-                      !form.password ||
-                      loading
-                    }
-                    className="btn btn-primary col-12"
-                  >
+                  <button disabled={loading} className="btn btn-primary col-12">
                     {loading ? <SyncOutlined spin /> : "Submit"}
                   </button>
                 </div>
@@ -194,7 +190,7 @@ const ProfileUpdate = () => {
             onCancel={() => setOK(false)}
             footer={null}
           >
-            <p>You have successfully registered.</p>
+            <p>You have successfully updated your profile.</p>
             <Link className="btn btn-primary btn-sm" href="/login">
               Login
             </Link>

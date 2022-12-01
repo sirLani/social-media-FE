@@ -16,7 +16,7 @@ interface userItem {
 
 type UserProps = {
   user: userItem;
-  token: string;
+  token?: string;
 };
 
 type IUserProps = [
@@ -41,7 +41,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const router = useRouter();
 
-  const token = state && state.token ? state.token : "";
+  const token = state?.token ? state.token : "";
   axios.defaults.baseURL = process.env.NEXT_PUBLIC_API;
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
