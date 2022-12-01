@@ -5,8 +5,18 @@ import { Modal } from "antd";
 import Link from "next/link";
 import { UserContext } from "../../../context";
 import { useRouter } from "next/router";
-import { SyncOutlined } from "@ant-design/icons";
+import {
+  CameraOutlined,
+  LoadingOutlined,
+  SyncOutlined,
+} from "@ant-design/icons";
 import styles from "../../../styles/register.module.css";
+import Avatar from "antd/es/avatar/avatar";
+
+type Iimage = {
+  url?: string;
+  public_id?: string;
+};
 
 const ProfileUpdate = () => {
   const [state, setState] = useContext(UserContext);
@@ -18,6 +28,14 @@ const ProfileUpdate = () => {
     username: state?.user.username as string,
     about: state?.user.about as string,
   });
+  // image: {
+  //   url?: string;
+  // };
+  // profile image
+  const [image, setImage] = useState<Iimage>({
+    url: state?.user.image as string,
+  });
+  const [uploading, setUploading] = useState(false);
 
   const [ok, setOK] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,6 +59,7 @@ const ProfileUpdate = () => {
         secret,
         username,
         about,
+        image,
       });
       if (data.error) {
         toast.error(data.error);
@@ -61,6 +80,28 @@ const ProfileUpdate = () => {
     }
   };
 
+  const handleImage = async (e: React.ChangeEvent) => {
+    const target = e?.target as HTMLInputElement;
+    const file: File = (target.files as FileList)[0];
+
+    let formData = new FormData();
+    formData.append("image", file);
+    // console.log([...formData]);
+    setUploading(true);
+    try {
+      const { data } = await axios.post("/upload-image", formData);
+      // console.log("uploaded image => ", data);
+      setImage({
+        url: data.url,
+        public_id: data.public_id,
+      });
+      setUploading(false);
+    } catch (err) {
+      console.log(err);
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="container-fluid">
       <div
@@ -73,6 +114,21 @@ const ProfileUpdate = () => {
 
       <div className="row py-5">
         <div className="col-md-6 offset-md-3">
+          <label className="d-flex justify-content-center h5">
+            {image && image.url ? (
+              <Avatar size={30} src={image.url} className="mt-1" />
+            ) : uploading ? (
+              <LoadingOutlined className="mt-2" />
+            ) : (
+              <CameraOutlined className="mt-2" />
+            )}
+            <input
+              onChange={handleImage}
+              type="file"
+              accept="images/*"
+              hidden
+            />
+          </label>
           <div className="row py-5">
             <div className="col-md-6 offset-md-3">
               <form onSubmit={handleSubmit}>
@@ -191,9 +247,6 @@ const ProfileUpdate = () => {
             footer={null}
           >
             <p>You have successfully updated your profile.</p>
-            <Link className="btn btn-primary btn-sm" href="/login">
-              Login
-            </Link>
           </Modal>
         </div>
       </div>

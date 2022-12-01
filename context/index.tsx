@@ -12,6 +12,7 @@ interface userItem {
   username?: string;
   about?: string;
   secret?: string;
+  image?: string;
 }
 
 type UserProps = {
