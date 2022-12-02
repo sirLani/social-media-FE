@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/postList";
 import { Avatar, List } from "antd";
+import Link from "next/link";
 
 interface IPosts {
   _id: string;
@@ -32,14 +33,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (state?.token) {
-      fetchUserPosts();
+      newsFeed();
       findPeople();
     }
   }, [state]);
 
-  const fetchUserPosts = async () => {
+  const newsFeed = async () => {
     try {
-      const { data } = await axios.get("/user-posts");
+      const { data } = await axios.get("/news-feed");
       console.log("user posts => ", data);
       setPosts(data);
     } catch (err) {
@@ -67,7 +68,7 @@ export default function Dashboard() {
       if (data.error) {
         toast.error(data.error);
       } else {
-        fetchUserPosts();
+        newsFeed();
         toast.success("Post created");
         setContent("");
         setImage({});
@@ -105,7 +106,7 @@ export default function Dashboard() {
       if (!answer) return;
       const { data } = await axios.delete(`/delete-post/${post._id}`);
       toast.error("Post deleted");
-      fetchUserPosts();
+      newsFeed();
     } catch (err) {
       console.log(err);
     }
@@ -134,12 +135,34 @@ export default function Dashboard() {
       let filtered = people?.filter((p) => p._id !== user._id);
       setPeople(filtered);
       // rerender the posts in newsfeed
-      //  newsFeed();
+      newsFeed();
       toast.success(`Following ${user.name}`);
     } catch (err) {
       console.log(err);
     }
   };
+
+  const handleLike = async (post: IPosts) => {
+    try {
+      const { data } = await axios.put("/like-post", { _id: post._id });
+      console.log("liked", data);
+      newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUnlike = async (post: IPosts) => {
+    // console.log("unlike this post => ", _id);
+    try {
+      const { data } = await axios.put("/unlike-post", { _id: post._id });
+      console.log("unliked", data);
+      newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <UserRoute>
       <div className="container-fluid">
@@ -162,9 +185,19 @@ export default function Dashboard() {
               image={image}
             />
             <br />
-            <PostList posts={posts} handleDelete={handleDelete} />
+            <PostList
+              handleLike={handleLike}
+              handleUnlike={handleUnlike}
+              posts={posts}
+              handleDelete={handleDelete}
+            />
           </div>
           <div className="col-md-4">
+            {state && state.user && state.user.following && (
+              <Link className="h6" href={`/user/following`}>
+                {state.user.following.length} Following
+              </Link>
+            )}
             <List
               itemLayout="horizontal"
               dataSource={people}
