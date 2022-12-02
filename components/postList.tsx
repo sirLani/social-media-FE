@@ -28,17 +28,25 @@ interface IProps {
   createdAt: Date;
   content: string;
   image: Iimage;
+  likes: string[];
 }
 type Iposts = {
   posts: IProps[];
   handleDelete: (post: IPosts) => void;
+  handleLike: (post: IPosts) => void;
+  handleUnlike: (post: IPosts) => void;
 };
 
 type IPosts = {
   _id: string;
 };
 
-const PostList = ({ posts, handleDelete }: Iposts) => {
+const PostList = ({
+  posts,
+  handleDelete,
+  handleLike,
+  handleUnlike,
+}: Iposts) => {
   const [state] = useContext(UserContext);
   const router = useRouter();
 
@@ -60,7 +68,18 @@ const PostList = ({ posts, handleDelete }: Iposts) => {
             <div className="card-footer">
               {post.image && <PostImage url={post.image.url} />}
               <div className="d-flex pt-2">
-                <HeartOutlined className="text-danger pt-2 h5" />
+                {post.likes.includes(state?.user._id as string) ? (
+                  <HeartFilled
+                    onClick={() => handleUnlike(post)}
+                    className="text-danger pt-2 h5 px-2"
+                  />
+                ) : (
+                  <HeartOutlined
+                    onClick={() => handleLike(post)}
+                    className="text-danger pt-2 h5"
+                  />
+                )}
+
                 <div className="pt-2 pl-3" style={{ marginRight: "1rem" }}>
                   3 likes
                 </div>
