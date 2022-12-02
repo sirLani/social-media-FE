@@ -11,7 +11,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useContext } from "react";
-import { UserContext } from "../context";
+import { UserContext, userItem } from "../context";
 import { useRouter } from "next/router";
 
 interface IPostedBy {
@@ -32,13 +32,10 @@ interface IProps {
 }
 type Iposts = {
   posts: IProps[];
-  handleDelete: (post: IPosts) => void;
-  handleLike: (post: IPosts) => void;
-  handleUnlike: (post: IPosts) => void;
-};
-
-type IPosts = {
-  _id: string;
+  handleDelete: (post: userItem) => void;
+  handleLike: (post: userItem) => void;
+  handleUnlike: (post: userItem) => void;
+  handleComment: (post: userItem) => void;
 };
 
 const PostList = ({
@@ -46,6 +43,7 @@ const PostList = ({
   handleDelete,
   handleLike,
   handleUnlike,
+  handleComment,
 }: Iposts) => {
   const [state] = useContext(UserContext);
   const router = useRouter();
@@ -81,9 +79,12 @@ const PostList = ({
                 )}
 
                 <div className="pt-2 pl-3" style={{ marginRight: "1rem" }}>
-                  3 likes
+                  {post.likes.length} likes
                 </div>
-                <CommentOutlined className="text-danger pt-2 h5 pl-5" />
+                <CommentOutlined
+                  onClick={() => handleComment(post)}
+                  className="text-danger pt-2 h5 pl-5"
+                />
                 <div className="pt-2 pl-3">2 comments</div>
                 {state?.user && state.user._id === post.postedBy._id && (
                   <>

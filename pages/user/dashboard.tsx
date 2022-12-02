@@ -9,12 +9,8 @@ import styles from "../../styles/register.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/postList";
-import { Avatar, List } from "antd";
+import { Avatar, List, Modal } from "antd";
 import Link from "next/link";
-
-interface IPosts {
-  _id: string;
-}
 
 export default function Dashboard() {
   const [state, setState] = useContext(UserContext);
@@ -27,6 +23,10 @@ export default function Dashboard() {
 
   // people
   const [people, setPeople] = useState<userItem[]>();
+
+  const [comment, setComment] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [currentPost, setCurrentPost] = useState<userItem>({});
 
   // route
   const router = useRouter();
@@ -100,7 +100,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleDelete = async (post: IPosts) => {
+  const handleDelete = async (post: userItem) => {
     try {
       const answer = window.confirm("Are you sure?");
       if (!answer) return;
@@ -142,7 +142,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleLike = async (post: IPosts) => {
+  const handleLike = async (post: userItem) => {
     try {
       const { data } = await axios.put("/like-post", { _id: post._id });
       console.log("liked", data);
@@ -152,7 +152,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleUnlike = async (post: IPosts) => {
+  const handleUnlike = async (post: userItem) => {
     // console.log("unlike this post => ", _id);
     try {
       const { data } = await axios.put("/unlike-post", { _id: post._id });
@@ -161,6 +161,35 @@ export default function Dashboard() {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleComment = (post: userItem) => {
+    setCurrentPost(post);
+    setVisible(true);
+  };
+
+  const addComment = async (
+    e: React.FormEvent<HTMLFormElement | HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+    // console.log("add comment to this post id", currentPost._id);
+    // console.log("save comment to db", comment);
+    try {
+      const { data } = await axios.put("/add-comment", {
+        postId: currentPost._id,
+        comment,
+      });
+      console.log("add comment", data);
+      setComment("");
+      setVisible(false);
+      newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const removeComment = async () => {
+    //
   };
 
   return (
@@ -190,6 +219,7 @@ export default function Dashboard() {
               handleUnlike={handleUnlike}
               posts={posts}
               handleDelete={handleDelete}
+              handleComment={handleComment}
             />
           </div>
           <div className="col-md-4">
@@ -222,6 +252,25 @@ export default function Dashboard() {
             />
           </div>
         </div>
+        <Modal
+          open={visible}
+          onCancel={() => setVisible(false)}
+          title="Comment"
+          footer={null}
+        >
+          <form onSubmit={addComment}>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Write something..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <button className="btn btn-primary btn-sm btn-block mt-3">
+              Submit
+            </button>
+          </form>
+        </Modal>
       </div>
     </UserRoute>
   );
