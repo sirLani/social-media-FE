@@ -264,7 +264,9 @@ export default function Dashboard() {
                     avatar={<Avatar src={imageSource(user)} />}
                     title={
                       <div className="d-flex justify-content-between">
-                        {user.username}
+                        <Link href={`/user/${user.username}`}>
+                          {user.username}
+                        </Link>
                         <span
                           onClick={() => handleFollow(user)}
                           className={`text-primary ${styles.pointer}`}

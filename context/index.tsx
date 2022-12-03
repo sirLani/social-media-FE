@@ -7,7 +7,7 @@ export interface userItem {
   email?: string;
   _id?: string;
   createdAt?: Date;
-  followers?: [];
+  followers?: string[];
   following?: [];
   username?: string;
   about?: string;
