@@ -1,20 +1,23 @@
-// import renderHTML from "react-render-html";
-import moment from "moment";
-import { Avatar } from "antd";
-import Image from "next/image";
-import PostImage from "./postImage";
+import { useState, useEffect, useCallback, useContext } from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { toast } from "react-toastify";
+import PostList from "../../components/postList";
+import { IComment, IPostedBy, UserContext, userItem } from "../../context";
+import Link from "next/link";
+import styles from "../../styles/register.module.css";
 import {
   CommentOutlined,
-  HeartOutlined,
-  HeartFilled,
-  EditOutlined,
   DeleteOutlined,
+  EditOutlined,
+  HeartFilled,
+  HeartOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
-import { useContext } from "react";
-import { IComment, IPostedBy, UserContext, userItem } from "../context";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { imageSource } from "../helpers";
+import { Avatar } from "antd";
+import PostImage from "../../components/postImage";
+import { imageSource } from "../../helpers";
+import moment from "moment";
 
 interface Iimage {
   url: string;
@@ -30,31 +33,86 @@ interface IProps {
   comments: IComment[];
 }
 
-type Iposts = {
-  posts: IProps[];
-  handleDelete: (post: userItem) => void;
-  handleLike: (post: userItem) => void;
-  handleUnlike: (post: userItem) => void;
-  handleComment: (post: userItem) => void;
-  removeComment: (id: string, comment: IComment) => void;
-  commentsCount?: number;
-};
+type Icomment = {};
 
-const PostList = ({
-  posts,
-  handleDelete,
-  handleLike,
-  handleUnlike,
-  handleComment,
-  removeComment,
-}: Iposts) => {
-  const [state] = useContext(UserContext);
+const PostComments = () => {
+  const [post, setPost] = useState<IProps>();
   const router = useRouter();
+  const _id = router.query._id;
+
+  const fetchPost = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`/user-post/${_id}`);
+      setPost(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [_id]);
+
+  useEffect(() => {
+    if (_id) fetchPost();
+  }, [_id, fetchPost]);
+
+  const [state] = useContext(UserContext);
+
+  const handleLike = async (post: userItem) => {
+    try {
+      const { data } = await axios.put("/like-post", { _id: post._id });
+      console.log("liked", data);
+      // newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUnlike = async (post: userItem) => {
+    try {
+      const { data } = await axios.put("/unlike-post", { _id: post._id });
+
+      // newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleDelete = async (post: userItem) => {
+    try {
+      const answer = window.confirm("Are you sure?");
+      if (!answer) return;
+      const { data } = await axios.delete(`/delete-post/${post._id}`);
+      toast.error("Post deleted");
+      // newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const removeComment = async (postId: string, comment: IComment) => {
+    let answer = window.confirm("Are you sure?");
+    if (!answer) return;
+    try {
+      const { data } = await axios.put("/remove-comment", {
+        postId,
+        comment,
+      });
+      console.log("comment removed", data);
+      fetchPost();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
-    <>
-      {posts &&
-        posts.map((post) => (
+    <div className="container-fluid">
+      <div
+        className={`${styles.bg_default_image} row py-5  text-light bg-default-image`}
+      >
+        <div className="col text-center">
+          <h1>POSTS</h1>
+        </div>
+      </div>
+
+      <div className="container col-md-8 offset-md-2 pt-5">
+        {post && (
           <div key={post._id} className="card mb-5">
             <div className="card-header">
               <Avatar size={40}>{post.postedBy.name[0]}</Avatar>
@@ -84,13 +142,10 @@ const PostList = ({
                 <div className="pt-2 pl-3" style={{ marginRight: "1rem" }}>
                   {post.likes.length} likes
                 </div>
-                <CommentOutlined
-                  onClick={() => handleComment(post)}
-                  className="text-danger pt-2 h5 px-2"
-                />
+                <CommentOutlined className="text-danger pt-2 h5 px-2" />
                 <div className="pt-2 pl-3">
-                  <Link href={`/post/${post._id}`}>
-                    {post.comments.length} comments
+                  <Link href={`/post/${post?._id}`}>
+                    {post?.comments.length} comments
                   </Link>
                 </div>
                 {state?.user && state.user._id === post.postedBy._id && (
@@ -109,7 +164,7 @@ const PostList = ({
             </div>
             {post?.comments?.length > 0 && (
               <ol className="list-group">
-                {post.comments.slice(0, 2).map((c) => (
+                {post.comments.slice(0, 100).map((c) => (
                   <li
                     key={c._id}
                     className="list-group-item d-flex justify-content-between align-items-start"
@@ -143,9 +198,17 @@ const PostList = ({
               </ol>
             )}
           </div>
-        ))}
-    </>
+        )}
+      </div>
+
+      <Link
+        className="d-flex justify-content-center p-5"
+        href="/user/dashboard"
+      >
+        <RollbackOutlined />
+      </Link>
+    </div>
   );
 };
 
-export default PostList;
+export default PostComments;

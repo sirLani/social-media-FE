@@ -13,7 +13,19 @@ export interface userItem {
   about?: string;
   secret?: string;
   image?: IImage;
+  comments?: IComment[];
 }
+export interface IPostedBy {
+  name: string;
+  _id: string;
+}
+
+export type IComment = {
+  _id: string;
+  created: string;
+  postedBy: IPostedBy;
+  text: string;
+};
 
 export type IImage = {
   url?: string;
