@@ -12,6 +12,7 @@ import PostList from "../../components/postList";
 import { Avatar, List, Modal, Pagination, PaginationProps } from "antd";
 import Link from "next/link";
 import { imageSource } from "../../helpers";
+import Search from "../../components/search";
 
 export default function Dashboard() {
   const [state, setState] = useContext(UserContext);
@@ -239,13 +240,16 @@ export default function Dashboard() {
               handleComment={handleComment}
               removeComment={removeComment}
             />
+            <Pagination
+              current={page}
+              onChange={onChange}
+              total={Math.round(totalPosts / 3) * 10}
+            />
           </div>
-          <Pagination
-            current={page}
-            onChange={onChange}
-            total={Math.round(totalPosts / 3) * 10}
-          />
+
           <div className="col-md-4">
+            <Search handleFollow={handleFollow} />
+
             {state && state.user && state.user.following && (
               <Link className="h6" href={`/user/following`}>
                 {state.user.following.length} Following
