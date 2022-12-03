@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import CreatePostForm from "../../components/createPostForm";
 import UserRoute from "../../components/routes/routes";
-import { UserContext, userItem } from "../../context";
+import { IComment, UserContext, userItem } from "../../context";
 import styles from "../../styles/register.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/postList";
 import { Avatar, List, Modal } from "antd";
 import Link from "next/link";
+import { imageSource } from "../../helpers";
 
 export default function Dashboard() {
   const [state, setState] = useContext(UserContext);
@@ -112,14 +113,6 @@ export default function Dashboard() {
     }
   };
 
-  const imageSource = (user: userItem) => {
-    if (user.image) {
-      return user.image.url;
-    } else {
-      return "/images/default.jpg";
-    }
-  };
-
   const handleFollow = async (user: userItem) => {
     // console.log("add this user to following list ", user);
     try {
@@ -188,8 +181,19 @@ export default function Dashboard() {
     }
   };
 
-  const removeComment = async () => {
-    //
+  const removeComment = async (postId: string, comment: IComment) => {
+    let answer = window.confirm("Are you sure?");
+    if (!answer) return;
+    try {
+      const { data } = await axios.put("/remove-comment", {
+        postId,
+        comment,
+      });
+      console.log("comment removed", data);
+      newsFeed();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -220,6 +224,7 @@ export default function Dashboard() {
               posts={posts}
               handleDelete={handleDelete}
               handleComment={handleComment}
+              removeComment={removeComment}
             />
           </div>
           <div className="col-md-4">
