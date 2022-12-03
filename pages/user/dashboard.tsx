@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import CreatePostForm from "../../components/createPostForm";
 import UserRoute from "../../components/routes/routes";
 import { IComment, UserContext, userItem } from "../../context";
@@ -9,7 +9,7 @@ import styles from "../../styles/register.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/postList";
-import { Avatar, List, Modal } from "antd";
+import { Avatar, List, Modal, Pagination, PaginationProps } from "antd";
 import Link from "next/link";
 import { imageSource } from "../../helpers";
 
@@ -29,25 +29,36 @@ export default function Dashboard() {
   const [visible, setVisible] = useState(false);
   const [currentPost, setCurrentPost] = useState<userItem>({});
 
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [page, setPage] = useState(1);
+
   // route
   const router = useRouter();
+
+  const newsFeed = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`/news-feed/${page}`);
+      console.log("user posts => ", data);
+      setPosts(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [page]);
 
   useEffect(() => {
     if (state?.token) {
       newsFeed();
       findPeople();
     }
-  }, [state]);
+  }, [state, newsFeed]);
 
-  const newsFeed = async () => {
+  useEffect(() => {
     try {
-      const { data } = await axios.get("/news-feed");
-      console.log("user posts => ", data);
-      setPosts(data);
+      axios.get("/total-posts").then(({ data }) => setTotalPosts(data));
     } catch (err) {
       console.log(err);
     }
-  };
+  }, []);
 
   const findPeople = async () => {
     try {
@@ -165,14 +176,12 @@ export default function Dashboard() {
     e: React.FormEvent<HTMLFormElement | HTMLButtonElement>
   ) => {
     e.preventDefault();
-    // console.log("add comment to this post id", currentPost._id);
-    // console.log("save comment to db", comment);
     try {
       const { data } = await axios.put("/add-comment", {
         postId: currentPost._id,
         comment,
       });
-      console.log("add comment", data);
+
       setComment("");
       setVisible(false);
       newsFeed();
@@ -194,6 +203,10 @@ export default function Dashboard() {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const onChange: PaginationProps["onChange"] = (page) => {
+    setPage(page);
   };
 
   return (
@@ -227,6 +240,11 @@ export default function Dashboard() {
               removeComment={removeComment}
             />
           </div>
+          <Pagination
+            current={page}
+            onChange={onChange}
+            total={Math.round(totalPosts / 3) * 10}
+          />
           <div className="col-md-4">
             {state && state.user && state.user.following && (
               <Link className="h6" href={`/user/following`}>
