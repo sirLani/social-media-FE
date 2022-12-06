@@ -30,7 +30,7 @@ interface IProps {
   comments: IComment[];
 }
 
-type Iposts = {
+export interface Iposts {
   posts: IProps[];
   handleDelete: (post: userItem) => void;
   handleLike: (post: userItem) => void;
@@ -38,7 +38,7 @@ type Iposts = {
   handleComment: (post: userItem) => void;
   removeComment: (id: string, comment: IComment) => void;
   commentsCount?: number;
-};
+}
 
 const PostList = ({
   posts,

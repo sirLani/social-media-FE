@@ -6,13 +6,16 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/antd";
 import { UserProvider } from "../context";
+import ClientOnly from "./Client";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <UserProvider>
-      <Navbar />
-      <ToastContainer position="top-center" />
-      <Component {...pageProps} />
-    </UserProvider>
+    <ClientOnly>
+      <UserProvider>
+        <Navbar />
+        <ToastContainer position="top-center" />
+        <Component {...pageProps} />
+      </UserProvider>
+    </ClientOnly>
   );
 }
