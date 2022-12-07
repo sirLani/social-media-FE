@@ -6,17 +6,13 @@ import {
   HeartOutlined,
 } from "@ant-design/icons";
 import { Avatar } from "antd";
-import axios from "axios";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import { useContext } from "react";
 import ParallaxBG from "../components/ParallaxBG";
 import PostImage from "../components/postImage";
-import { IComment, IPostedBy, UserContext, userItem } from "../context";
+import { IComment, IPostedBy, UserContext } from "../context";
 
-import Link from "next/link";
-import { useRouter } from "next/router";
 import moment from "moment";
 import { imageSource } from "../helpers";
 
@@ -32,14 +28,11 @@ interface IProps {
   image: Iimage;
   likes: string[];
   comments: IComment[];
+  err: string;
 }
 
-interface Iposts {
-  posts: IProps[];
-}
 const Home = ({ posts }: { posts: IProps[] }) => {
-  const [state, setState] = useContext(UserContext);
-  const router = useRouter();
+  const [state] = useContext(UserContext);
 
   const head = () => (
     <Head>
@@ -136,8 +129,9 @@ const Home = ({ posts }: { posts: IProps[] }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { data } = await axios.get("/posts");
+export const getServerSideProps: GetServerSideProps = async () => {
+  const reponse = await fetch(`${process.env.NEXT_PUBLIC_API}/all-posts`);
+  const data = await reponse.json();
   return {
     props: {
       posts: data,
