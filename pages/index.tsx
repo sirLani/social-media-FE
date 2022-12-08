@@ -15,6 +15,7 @@ import { IComment, IPostedBy, UserContext } from "../context";
 
 import moment from "moment";
 import { imageSource } from "../helpers";
+import axios from "axios";
 
 interface Iimage {
   url: string;
@@ -130,8 +131,7 @@ const Home = ({ posts }: { posts: IProps[] }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const reponse = await fetch(`${process.env.NEXT_PUBLIC_API}/all-posts`);
-  const data = await reponse.json();
+  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API}/all-posts`);
   return {
     props: {
       posts: data,

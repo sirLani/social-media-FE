@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -17,6 +17,15 @@ const Login = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [state, setState] = useContext(UserContext);
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    if (form.password && form.email) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [form.password, form.email]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -67,7 +76,9 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Email address</label>
+                <label htmlFor="email" className="text-muted">
+                  Email
+                </label>
               </small>
               <input
                 value={form.email}
@@ -75,13 +86,16 @@ const Login = () => {
                 onChange={onChange}
                 type="email"
                 className="form-control"
-                placeholder="Enter name"
+                placeholder="Enter Email"
+                id="email"
               />
             </div>
 
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Password</label>
+                <label htmlFor="password" className="text-muted">
+                  Password
+                </label>
               </small>
               <input
                 value={form.password}
@@ -90,15 +104,22 @@ const Login = () => {
                 className="form-control"
                 placeholder="Enter Password"
                 name="password"
+                id="password"
               />
             </div>
 
             <div className="form-group p-2">
               <button
-                disabled={!form.email || !form.password || loading}
+                disabled={disabled || loading}
                 className="btn btn-primary col-12"
               >
-                {loading ? <SyncOutlined spin /> : "Submit"}
+                {loading ? (
+                  <span role="status">
+                    <SyncOutlined spin />
+                  </span>
+                ) : (
+                  "Submit"
+                )}
               </button>
             </div>
           </form>
