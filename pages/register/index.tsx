@@ -67,7 +67,9 @@ const Register = () => {
           <form onSubmit={handleSubmit}>
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Your name</label>
+                <label htmlFor="name" className="text-muted">
+                  Your name
+                </label>
               </small>
               <input
                 value={form.name}
@@ -76,12 +78,15 @@ const Register = () => {
                 type="text"
                 className="form-control"
                 placeholder="Enter name"
+                id="name"
               />
             </div>
 
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Email address</label>
+                <label htmlFor="email" className="text-muted">
+                  Email address
+                </label>
               </small>
               <input
                 value={form.email}
@@ -89,27 +94,33 @@ const Register = () => {
                 onChange={onChange}
                 type="email"
                 className="form-control"
-                placeholder="Enter name"
+                placeholder="Enter Email"
+                id="email"
               />
             </div>
 
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Password</label>
+                <label htmlFor="password" className="text-muted">
+                  Password
+                </label>
               </small>
               <input
                 value={form.password}
                 onChange={onChange}
                 type="password"
                 className="form-control"
-                placeholder="Enter name"
+                placeholder="Enter password"
                 name="password"
+                id="password"
               />
             </div>
 
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Pick a question</label>
+                <label htmlFor="secret" className="text-muted">
+                  Pick a question
+                </label>
               </small>
               <select className="form-control">
                 <option>What is your favourite color?</option>
@@ -129,7 +140,8 @@ const Register = () => {
                 type="text"
                 name="secret"
                 className="form-control"
-                placeholder="Write your answer here"
+                placeholder="Write your secret answer here"
+                id="secret"
               />
             </div>
 
@@ -144,7 +156,13 @@ const Register = () => {
                 }
                 className="btn btn-primary col-12"
               >
-                {loading ? <SyncOutlined spin /> : "Submit"}
+                {loading ? (
+                  <span role="status">
+                    <SyncOutlined spin />
+                  </span>
+                ) : (
+                  "Submit"
+                )}
               </button>
             </div>
           </form>

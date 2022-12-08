@@ -85,6 +85,14 @@ describe("Login Interactions", () => {
     expect(passwordInput).toHaveValue("123456");
   });
 
+  it("disables button when email and password inputs are not filled", async () => {
+    setup();
+    const button = screen.queryByRole("button", {
+      name: /Submit/i,
+    }) as HTMLButtonElement;
+    expect(button).toBeDisabled();
+  });
+
   it("enables button when email and password inputs are filled", async () => {
     setup();
     const emailInput = screen.getByPlaceholderText(
