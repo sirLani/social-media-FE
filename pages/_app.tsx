@@ -8,6 +8,10 @@ import "antd/dist/antd";
 import { UserProvider } from "../context";
 import ClientOnly from "./Client";
 
+if (process.env.NEXT_PUBLIC_API_MOCKING === "enabled") {
+  require("../mocks");
+}
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ClientOnly>

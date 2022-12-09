@@ -1,10 +1,12 @@
 import {
   render,
   screen,
+  waitFor,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 import Login from ".";
 import userEvent from "@testing-library/user-event";
+import { toast } from "react-toastify";
 
 jest.mock("next/router", () => ({
   useRouter() {
@@ -76,11 +78,6 @@ describe("Login", () => {
 });
 
 describe("Login Interactions", () => {
-  let count = 0;
-
-  beforeEach(() => {
-    count = 0;
-  });
   it("email input takes value when typed", async () => {
     setup();
     const emailInput = screen.getByPlaceholderText(
@@ -143,5 +140,26 @@ describe("Login Interactions", () => {
     await userEvent.click(button);
     const loader = screen.getByRole("status");
     await waitForElementToBeRemoved(loader);
+  });
+  it("sends the details to the backend when the button is clicked", async () => {
+    setup();
+    const emailInput = screen.getByPlaceholderText(
+      /Enter Email/i
+    ) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      /Enter Password/i
+    ) as HTMLInputElement;
+    await userEvent.type(emailInput, "user@mail.com");
+    await userEvent.type(passwordInput, "123456");
+    const button = screen.queryByRole("button", {
+      name: /Submit/i,
+    }) as HTMLButtonElement;
+
+    await userEvent.click(button);
+    const loader = screen.getByRole("status");
+    expect(loader).toBeInTheDocument();
+    await waitForElementToBeRemoved(loader);
+    const chang = await screen.findByText("chang");
+    expect(chang).toBeInTheDocument();
   });
 });
