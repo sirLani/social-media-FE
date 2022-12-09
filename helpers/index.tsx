@@ -1,4 +1,4 @@
-import { userItem } from "../context";
+import { userItem } from "./helper.types";
 
 export const imageSource = (user: userItem) => {
   if (user.image) {

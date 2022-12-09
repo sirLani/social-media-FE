@@ -18,6 +18,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [state, setState] = useContext(UserContext);
   const [disabled, setDisabled] = useState(true);
+  const [status, setStatus] = useState("test");
 
   useEffect(() => {
     if (form.password && form.email) {
@@ -35,13 +36,17 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    console.log("success section");
+
     const { email, password } = form;
     try {
       const { data } = await axios.post(`/login`, {
         email,
         password,
       });
+
       if (data.error) {
+        console.log("error section");
         toast.error(data.error);
         setLoading(false);
       } else {
@@ -51,9 +56,11 @@ const Login = () => {
           token: data.token,
         });
         // save in local storage
+        setStatus("chang");
         window.localStorage.setItem("auth", JSON.stringify(data));
+        setLoading(false);
 
-        router.push("/");
+        // router.push("/");
       }
     } catch (err: any) {
       toast.error(err.response.data);
@@ -75,6 +82,7 @@ const Login = () => {
         <div className="col-md-6 offset-md-3">
           <form onSubmit={handleSubmit}>
             <div className="form-group p-2">
+              <p>{status}</p>
               <small>
                 <label htmlFor="email" className="text-muted">
                   Email
