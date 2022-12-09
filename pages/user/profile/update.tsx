@@ -12,11 +12,7 @@ import {
 } from "@ant-design/icons";
 import styles from "../../../styles/register.module.css";
 import Avatar from "antd/es/avatar/avatar";
-
-type Iimage = {
-  url?: string;
-  public_id?: string;
-};
+import { Iimage } from "../../../helpers/helper.types";
 
 const ProfileUpdate = () => {
   const [state, setState] = useContext(UserContext);

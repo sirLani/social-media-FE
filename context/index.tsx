@@ -1,36 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useState, createContext, useEffect } from "react";
 import axios from "axios";
-
-export interface userItem {
-  name?: string;
-  email?: string;
-  _id?: string;
-  createdAt?: Date;
-  followers?: string[];
-  following?: [];
-  username?: string;
-  about?: string;
-  secret?: string;
-  image?: IImage;
-  comments?: IComment[];
-}
-export interface IPostedBy {
-  name: string;
-  _id: string;
-}
-
-export type IComment = {
-  _id: string;
-  created: string;
-  postedBy: IPostedBy;
-  text: string;
-};
-
-export type IImage = {
-  url?: string;
-  public_id?: string;
-};
+import { userItem } from "../helpers/helper.types";
 
 export type UserProps = {
   user: userItem;

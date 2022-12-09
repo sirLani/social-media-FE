@@ -1,20 +1,19 @@
 import { useContext, useState, useEffect } from "react";
 import { Avatar, List } from "antd";
-import moment from "moment";
-import { useRouter } from "next/router";
-import { UserContext, userItem } from "../../context";
+
+import { UserContext } from "../../context";
 import axios from "axios";
 import { RollbackOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import styles from "../../styles/register.module.css";
+import { imageSource } from "../../helpers";
+import { userItem } from "../../helpers/helper.types";
 
 const Following = () => {
   const [state, setState] = useContext(UserContext);
   // state
   const [people, setPeople] = useState<userItem[]>([]);
-
-  const router = useRouter();
 
   useEffect(() => {
     if (state?.token) fetchFollowing();
@@ -27,14 +26,6 @@ const Following = () => {
       setPeople(data);
     } catch (err) {
       console.log(err);
-    }
-  };
-
-  const imageSource = (user: userItem) => {
-    if (user.image) {
-      return user.image.url;
-    } else {
-      return "/images/default.jpg";
     }
   };
 
@@ -57,7 +48,6 @@ const Following = () => {
 
   return (
     <div className="row col-md-6 offset-md-3">
-      {/* <pre>{JSON.stringify(people, null, 4)}</pre> */}
       <List
         itemLayout="horizontal"
         dataSource={people}

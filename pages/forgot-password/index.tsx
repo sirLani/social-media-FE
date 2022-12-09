@@ -65,7 +65,9 @@ const ForgotPassword = () => {
           <form onSubmit={handleSubmit}>
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Email address</label>
+                <label htmlFor="email" className="text-muted">
+                  Email address
+                </label>
               </small>
               <input
                 value={form.email}
@@ -73,26 +75,32 @@ const ForgotPassword = () => {
                 onChange={onChange}
                 type="email"
                 className="form-control"
-                placeholder="Enter name"
+                placeholder="Enter Email"
+                id="email"
               />
             </div>
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">New Password</label>
+                <label htmlFor="newpassword" className="text-muted">
+                  New Password
+                </label>
               </small>
               <input
                 value={form.newPassword}
                 onChange={onChange}
-                type="newPassword"
+                type="password"
                 className="form-control"
-                placeholder="Enter name"
+                placeholder="Enter password"
                 name="newPassword"
+                id="newpassword"
               />
             </div>
 
             <div className="form-group p-2">
               <small>
-                <label className="text-muted">Pick a question</label>
+                <label htmlFor="secret" className="text-muted">
+                  Pick a question
+                </label>
               </small>
               <select className="form-control">
                 <option>What is your favourite color?</option>
@@ -112,7 +120,8 @@ const ForgotPassword = () => {
                 type="text"
                 name="secret"
                 className="form-control"
-                placeholder="Write your answer here"
+                placeholder="Write your secret answer here"
+                id="secret"
               />
             </div>
 
@@ -123,7 +132,13 @@ const ForgotPassword = () => {
                 }
                 className="btn btn-primary col-12"
               >
-                {loading ? <SyncOutlined spin /> : "Submit"}
+                {loading ? (
+                  <span role="status">
+                    <SyncOutlined spin />
+                  </span>
+                ) : (
+                  "Submit"
+                )}
               </button>
             </div>
           </form>

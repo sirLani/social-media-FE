@@ -58,6 +58,20 @@ describe("Login", () => {
       const button = screen.queryByRole("button", { name: "Submit" });
       expect(button).toBeInTheDocument();
     });
+    it("has register link", () => {
+      setup();
+      expect(screen.getByRole("link", { name: /Register/i })).toHaveAttribute(
+        "href",
+        "/register"
+      );
+    });
+
+    it("has forgot password link", () => {
+      setup();
+      expect(
+        screen.getByRole("link", { name: /Forgot password/i })
+      ).toHaveAttribute("href", "/forgot-password");
+    });
   });
 });
 
