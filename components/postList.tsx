@@ -11,24 +11,11 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useContext } from "react";
-import { IComment, IPostedBy, UserContext, userItem } from "../context";
+import { UserContext } from "../context";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { imageSource } from "../helpers";
-
-interface Iimage {
-  url: string;
-}
-
-interface IProps {
-  _id: string;
-  postedBy: IPostedBy;
-  createdAt: Date;
-  content: string;
-  image: Iimage;
-  likes: string[];
-  comments: IComment[];
-}
+import { IComment, IProps, userItem } from "../helpers/helper.types";
 
 export interface Iposts {
   posts: IProps[];

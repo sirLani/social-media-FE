@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/postList";
-import { IComment, IPostedBy, UserContext, userItem } from "../../context";
+import { UserContext } from "../../context";
 import Link from "next/link";
 import styles from "../../styles/register.module.css";
 import {
@@ -18,22 +18,7 @@ import { Avatar } from "antd";
 import PostImage from "../../components/postImage";
 import { imageSource } from "../../helpers";
 import moment from "moment";
-
-interface Iimage {
-  url: string;
-}
-
-interface IProps {
-  _id: string;
-  postedBy: IPostedBy;
-  createdAt: Date;
-  content: string;
-  image: Iimage;
-  likes: string[];
-  comments: IComment[];
-}
-
-type Icomment = {};
+import { IComment, IProps, userItem } from "../../helpers/helper.types";
 
 const PostComments = () => {
   const [post, setPost] = useState<IProps>();

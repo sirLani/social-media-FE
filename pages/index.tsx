@@ -11,26 +11,12 @@ import Head from "next/head";
 import { useContext } from "react";
 import ParallaxBG from "../components/ParallaxBG";
 import PostImage from "../components/postImage";
-import { IComment, IPostedBy, UserContext } from "../context";
+import { UserContext } from "../context";
 
 import moment from "moment";
 import { imageSource } from "../helpers";
 import axios from "axios";
-
-interface Iimage {
-  url: string;
-}
-
-interface IProps {
-  _id: string;
-  postedBy: IPostedBy;
-  createdAt: Date;
-  content: string;
-  image: Iimage;
-  likes: string[];
-  comments: IComment[];
-  err: string;
-}
+import { IProps } from "../helpers/helper.types";
 
 const Home = ({ posts }: { posts: IProps[] }) => {
   const [state] = useContext(UserContext);
