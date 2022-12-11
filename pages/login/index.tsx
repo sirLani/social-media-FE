@@ -19,7 +19,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [state, setState] = useContext(UserContext);
   const [disabled, setDisabled] = useState(true);
-  const [status, setStatus] = useState("test");
 
   useEffect(() => {
     if (form.password && form.email) {
@@ -37,28 +36,23 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const { email, password } = form;
-    try {
-      const response = await loginApi(email, password);
 
-      if (response?.error) {
-        toast.error(response.error);
-        setLoading(false);
-      } else {
-        // update context
-        setState({
-          user: response?.user,
-          token: response?.token,
-        });
-        // save in local storage
-        setStatus("chang");
-        window.localStorage.setItem("auth", JSON.stringify(response));
-        setLoading(false);
+    const response = await loginApi(form);
 
-        // router.push("/");
-      }
-    } catch (error) {
-      console.log(error);
+    if (response?.error) {
+      toast.error(response.error);
+      setLoading(false);
+    } else {
+      // update context
+      setState({
+        user: response?.user,
+        token: response?.token,
+      });
+      // save in local storage
+
+      window.localStorage.setItem("auth", JSON.stringify(response));
+      setLoading(false);
+      // router.push("/");
     }
   };
 
@@ -76,7 +70,6 @@ const Login = () => {
         <div className="col-md-6 offset-md-3">
           <form onSubmit={handleSubmit}>
             <div className="form-group p-2">
-              <p>{status}</p>
               <small>
                 <label htmlFor="email" className="text-muted">
                   Email

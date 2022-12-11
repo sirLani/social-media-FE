@@ -1,11 +1,14 @@
 import {
   render,
   screen,
+  waitFor,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 
 import userEvent from "@testing-library/user-event";
+import { rest } from "msw";
 import Register from ".";
+import { server } from "../../mocks/server";
 
 jest.mock("next/router", () => ({
   useRouter() {
@@ -170,8 +173,104 @@ describe("Register page", () => {
       }) as HTMLButtonElement;
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
       await userEvent.click(button);
-      const loader = screen.getByRole("status");
-      await waitForElementToBeRemoved(loader);
+      await waitForElementToBeRemoved(screen.getByRole("status"));
+    });
+  });
+  it("sends the details to the backend when the button is clicked", async () => {
+    let reqBody;
+    let count = 0;
+    server.use(
+      rest.post("/register", (req, res, ctx) => {
+        reqBody = req.body;
+        count += 1;
+        return res(ctx.json({ success: true }));
+      })
+    );
+    setup();
+    const emailInput = screen.getByPlaceholderText(
+      /Enter Email/i
+    ) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      /Enter Password/i
+    ) as HTMLInputElement;
+    const nameInput = screen.getByPlaceholderText(
+      /Enter name/i
+    ) as HTMLInputElement;
+    const secretInput = screen.getByPlaceholderText(
+      /Write your secret answer here/i
+    ) as HTMLInputElement;
+
+    await userEvent.type(nameInput, "user");
+    await userEvent.type(emailInput, "user@mail.com");
+    await userEvent.type(passwordInput, "123456");
+    await userEvent.type(secretInput, "red");
+    const button = screen.queryByRole("button", {
+      name: /Submit/i,
+    }) as HTMLButtonElement;
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    await userEvent.click(button);
+    expect(screen.queryByRole("status")).toBeInTheDocument();
+    expect(reqBody).toEqual({
+      name: "user",
+      email: "user@mail.com",
+      password: "123456",
+      secret: "red",
+    });
+  });
+  it("disables the button when there is an api call", async () => {
+    setup();
+    const emailInput = screen.getByPlaceholderText(
+      /Enter Email/i
+    ) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      /Enter Password/i
+    ) as HTMLInputElement;
+    const nameInput = screen.getByPlaceholderText(
+      /Enter name/i
+    ) as HTMLInputElement;
+    const secretInput = screen.getByPlaceholderText(
+      /Write your secret answer here/i
+    ) as HTMLInputElement;
+
+    await userEvent.type(nameInput, "user");
+    await userEvent.type(emailInput, "user@mail.com");
+    await userEvent.type(passwordInput, "123456");
+    await userEvent.type(secretInput, "red");
+    const button = screen.queryByRole("button", {
+      name: /Submit/i,
+    }) as HTMLButtonElement;
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    await userEvent.click(button);
+    expect(button).toBeDisabled();
+  });
+  it("displays modal when call is successful", async () => {
+    setup();
+    const emailInput = screen.getByPlaceholderText(
+      /Enter Email/i
+    ) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      /Enter Password/i
+    ) as HTMLInputElement;
+    const nameInput = screen.getByPlaceholderText(
+      /Enter name/i
+    ) as HTMLInputElement;
+    const secretInput = screen.getByPlaceholderText(
+      /Write your secret answer here/i
+    ) as HTMLInputElement;
+
+    await userEvent.type(nameInput, "user");
+    await userEvent.type(emailInput, "user@mail.com");
+    await userEvent.type(passwordInput, "123456");
+    await userEvent.type(secretInput, "red");
+    const button = screen.queryByRole("button", {
+      name: /Submit/i,
+    }) as HTMLButtonElement;
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    await userEvent.click(button);
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/You have successfully registered./i)
+      ).toBeInTheDocument();
     });
   });
 });
