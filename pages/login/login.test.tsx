@@ -6,7 +6,8 @@ import {
 } from "@testing-library/react";
 import Login from ".";
 import userEvent from "@testing-library/user-event";
-import { toast } from "react-toastify";
+import { server } from "../../mocks/server";
+import { rest } from "msw";
 
 jest.mock("next/router", () => ({
   useRouter() {
@@ -138,10 +139,21 @@ describe("Login Interactions", () => {
     }) as HTMLButtonElement;
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await userEvent.click(button);
+    expect(screen.queryByRole("status")).toBeInTheDocument();
     const loader = screen.getByRole("status");
     await waitForElementToBeRemoved(loader);
   });
+  describe("API Call", () => {});
   it("sends the details to the backend when the button is clicked", async () => {
+    let reqBody;
+    let count = 0;
+    server.use(
+      rest.post("/login", (req, res, ctx) => {
+        reqBody = req.body;
+        count += 1;
+        return res(ctx.json({ success: true }));
+      })
+    );
     setup();
     const emailInput = screen.getByPlaceholderText(
       /Enter Email/i
@@ -154,12 +166,59 @@ describe("Login Interactions", () => {
     const button = screen.queryByRole("button", {
       name: /Submit/i,
     }) as HTMLButtonElement;
-
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await userEvent.click(button);
-    const loader = screen.getByRole("status");
+    const loader = screen.queryByRole("status");
     expect(loader).toBeInTheDocument();
-    await waitForElementToBeRemoved(loader);
-    const chang = await screen.findByText("chang");
-    expect(chang).toBeInTheDocument();
+    expect(reqBody).toEqual({
+      email: "user@mail.com",
+      password: "123456",
+    });
+    // it calls the function just once
+    expect(count).toEqual(1);
   });
+  it("disables the button when there is an api call", async () => {
+    setup();
+    const emailInput = screen.getByPlaceholderText(
+      /Enter Email/i
+    ) as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText(
+      /Enter Password/i
+    ) as HTMLInputElement;
+    await userEvent.type(emailInput, "user@mail.com");
+    await userEvent.type(passwordInput, "123456");
+    const button = screen.queryByRole("button", {
+      name: /Submit/i,
+    }) as HTMLButtonElement;
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    await userEvent.click(button);
+    expect(button).toBeDisabled();
+  });
+  // it("displays authentication fail message", async () => {
+  //   server.use(
+  //     rest.post("/login", (req, res, ctx) => {
+  //       return res(
+  //         ctx.status(400),
+  //         ctx.json({ message: "Incorrect credentials" })
+  //       );
+  //     })
+  //   );
+  //   setup();
+  //   const emailInput = screen.getByPlaceholderText(
+  //     /Enter Email/i
+  //   ) as HTMLInputElement;
+  //   const passwordInput = screen.getByPlaceholderText(
+  //     /Enter Password/i
+  //   ) as HTMLInputElement;
+  //   await userEvent.type(emailInput, "user56@mail.com");
+  //   await userEvent.type(passwordInput, "123456");
+  //   const button = screen.queryByRole("button", {
+  //     name: /Submit/i,
+  //   }) as HTMLButtonElement;
+  //   expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  //   await userEvent.click(button);
+  //   await waitFor(() => {
+  //     expect(toast.error).toHaveBeenCalled();
+  //   });
+  // });
 });
