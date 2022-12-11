@@ -1,6 +1,7 @@
 import axios from "axios";
+import { LoginProp } from "./entity";
 
-export const loginApi = async (email: string, password: string) => {
+export const loginApi = async ({ email, password }: LoginProp) => {
   try {
     const { data } = await axios.post(`/login`, {
       email,

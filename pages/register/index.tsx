@@ -6,6 +6,7 @@ import { SyncOutlined } from "@ant-design/icons";
 import styles from "../../styles/register.module.css";
 
 import Link from "next/link";
+import { registerApi } from "./api";
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -25,29 +26,18 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const { name, email, password, secret } = form;
-    try {
-      const { data } = await axios.post(`/register`, {
-        name,
-        email,
-        password,
-        secret,
+    const response = await registerApi(form);
+    if (response.error) {
+      toast.error(response.error);
+      setLoading(false);
+    } else {
+      setOK(response.ok);
+      setForm({
+        email: "",
+        password: "",
+        name: "",
+        secret: "",
       });
-      if (data.error) {
-        toast.error(data.error);
-        setLoading(false);
-      } else {
-        setOK(data.ok);
-        setForm({
-          email: "",
-          password: "",
-          name: "",
-          secret: "",
-        });
-        setLoading(false);
-      }
-    } catch (err: any) {
-      toast.error(err.response.data);
       setLoading(false);
     }
   };

@@ -140,10 +140,9 @@ describe("Login Interactions", () => {
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await userEvent.click(button);
     expect(screen.queryByRole("status")).toBeInTheDocument();
-    const loader = screen.getByRole("status");
-    await waitForElementToBeRemoved(loader);
+    await waitForElementToBeRemoved(screen.getByRole("status"));
   });
-  describe("API Call", () => {});
+
   it("sends the details to the backend when the button is clicked", async () => {
     let reqBody;
     let count = 0;
@@ -168,8 +167,7 @@ describe("Login Interactions", () => {
     }) as HTMLButtonElement;
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await userEvent.click(button);
-    const loader = screen.queryByRole("status");
-    expect(loader).toBeInTheDocument();
+    expect(screen.queryByRole("status")).toBeInTheDocument();
     expect(reqBody).toEqual({
       email: "user@mail.com",
       password: "123456",
@@ -218,7 +216,7 @@ describe("Login Interactions", () => {
   //   expect(screen.queryByRole("status")).not.toBeInTheDocument();
   //   await userEvent.click(button);
   //   await waitFor(() => {
-  //     expect(toast.error).toHaveBeenCalled();
+  //     expect(screen.findByText(/Incorrect credentials/i)).toBeInTheDocument();
   //   });
   // });
 });

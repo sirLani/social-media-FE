@@ -2,6 +2,19 @@ import { rest } from "msw";
 import { UserProps } from "../context";
 
 export const handlers = [
+  // Handles a POST /register user request
+  rest.post("/register", (req, res, ctx) => {
+    return res(
+      // Respond with a 200 status code
+      ctx.status(200),
+      ctx.json({
+        ok: true,
+        name: "user",
+        email: "user@mail.com",
+      })
+    );
+  }),
+
   // Handles a POST /login request
   rest.post("/login", (req, res, ctx) => {
     return res(
