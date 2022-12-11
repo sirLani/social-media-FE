@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 
 import { SyncOutlined } from "@ant-design/icons";
@@ -19,6 +18,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [state, setState] = useContext(UserContext);
   const [disabled, setDisabled] = useState(true);
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     if (form.password && form.email) {
@@ -48,13 +48,13 @@ const Login = () => {
         user: response?.user,
         token: response?.token,
       });
-      // save in local storage
-
       window.localStorage.setItem("auth", JSON.stringify(response));
       setLoading(false);
-      // router.push("/");
+      setRedirect(true);
     }
   };
+
+  if (redirect) router.push("/");
 
   return (
     <div className="container-fluid">

@@ -8,14 +8,11 @@ import Login from ".";
 import userEvent from "@testing-library/user-event";
 import { server } from "../../mocks/server";
 import { rest } from "msw";
+import { useRouter } from "next/router";
 
 jest.mock("next/router", () => ({
-  useRouter() {
-    return {
-      pathname: "",
-      // ... whatever else you you call on `router`
-    };
-  },
+  __esModule: true,
+  useRouter: jest.fn(),
 }));
 
 const setup = () => {
@@ -79,6 +76,30 @@ describe("Login", () => {
 });
 
 describe("Login Interactions", () => {
+  const mockRouter = {
+    push: jest.fn(), // the component uses `router.push` only
+  };
+  (useRouter as jest.Mock).mockReturnValue(mockRouter);
+
+  let button: HTMLButtonElement;
+  let emailInput: HTMLInputElement;
+  let passwordInput: HTMLInputElement;
+
+  const newSetup = async () => {
+    setup();
+    emailInput = screen.getByPlaceholderText(
+      /Enter Email/i
+    ) as HTMLInputElement;
+    passwordInput = screen.getByPlaceholderText(
+      /Enter Password/i
+    ) as HTMLInputElement;
+    await userEvent.type(emailInput, "user@mail.com");
+    await userEvent.type(passwordInput, "123456");
+    button = screen.queryByRole("button", {
+      name: /Submit/i,
+    }) as HTMLButtonElement;
+  };
+
   it("email input takes value when typed", async () => {
     setup();
     const emailInput = screen.getByPlaceholderText(
@@ -106,18 +127,7 @@ describe("Login Interactions", () => {
   });
 
   it("enables button when email and password inputs are filled", async () => {
-    setup();
-    const emailInput = screen.getByPlaceholderText(
-      /Enter Email/i
-    ) as HTMLInputElement;
-    const passwordInput = screen.getByPlaceholderText(
-      /Enter Password/i
-    ) as HTMLInputElement;
-    await userEvent.type(emailInput, "user@mail.com");
-    await userEvent.type(passwordInput, "123456");
-    const button = screen.queryByRole("button", {
-      name: /Submit/i,
-    }) as HTMLButtonElement;
+    await newSetup();
     expect(button).toBeEnabled();
   });
   it("expect Spinner not to be in the document initially", async () => {
@@ -125,18 +135,7 @@ describe("Login Interactions", () => {
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
   it("displays spinner while API in progress", async () => {
-    setup();
-    const emailInput = screen.getByPlaceholderText(
-      /Enter Email/i
-    ) as HTMLInputElement;
-    const passwordInput = screen.getByPlaceholderText(
-      /Enter Password/i
-    ) as HTMLInputElement;
-    await userEvent.type(emailInput, "user@mail.com");
-    await userEvent.type(passwordInput, "123456");
-    const button = screen.queryByRole("button", {
-      name: /Submit/i,
-    }) as HTMLButtonElement;
+    await newSetup();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await userEvent.click(button);
     expect(screen.queryByRole("status")).toBeInTheDocument();
@@ -153,18 +152,7 @@ describe("Login Interactions", () => {
         return res(ctx.json({ success: true }));
       })
     );
-    setup();
-    const emailInput = screen.getByPlaceholderText(
-      /Enter Email/i
-    ) as HTMLInputElement;
-    const passwordInput = screen.getByPlaceholderText(
-      /Enter Password/i
-    ) as HTMLInputElement;
-    await userEvent.type(emailInput, "user@mail.com");
-    await userEvent.type(passwordInput, "123456");
-    const button = screen.queryByRole("button", {
-      name: /Submit/i,
-    }) as HTMLButtonElement;
+    await newSetup();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await userEvent.click(button);
     expect(screen.queryByRole("status")).toBeInTheDocument();
@@ -176,32 +164,33 @@ describe("Login Interactions", () => {
     expect(count).toEqual(1);
   });
   it("disables the button when there is an api call", async () => {
-    setup();
-    const emailInput = screen.getByPlaceholderText(
-      /Enter Email/i
-    ) as HTMLInputElement;
-    const passwordInput = screen.getByPlaceholderText(
-      /Enter Password/i
-    ) as HTMLInputElement;
-    await userEvent.type(emailInput, "user@mail.com");
-    await userEvent.type(passwordInput, "123456");
-    const button = screen.queryByRole("button", {
-      name: /Submit/i,
-    }) as HTMLButtonElement;
+    await newSetup();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await userEvent.click(button);
     expect(button).toBeDisabled();
   });
-  // it("displays authentication fail message", async () => {
+
+  it("calls the redirect function when login is successful", async () => {
+    await newSetup();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    await userEvent.click(button);
+    expect(screen.queryByRole("status")).toBeInTheDocument();
+    expect(mockRouter.push).toHaveBeenCalledWith("/");
+  });
+  // it.only("displays authentication fail message", async () => {
   //   server.use(
-  //     rest.post("/login", (req, res, ctx) => {
+  //     rest.post("/login", async (req, res, ctx) => {
+  //       const { email } = await req.json();
+
   //       return res(
-  //         ctx.status(400),
-  //         ctx.json({ message: "Incorrect credentials" })
+  //         ctx.status(500),
+  //         ctx.json({ error: "Incorrect credentials" })
   //       );
   //     })
   //   );
+
   //   setup();
+
   //   const emailInput = screen.getByPlaceholderText(
   //     /Enter Email/i
   //   ) as HTMLInputElement;
