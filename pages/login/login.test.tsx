@@ -189,19 +189,7 @@ describe("Login Interactions", () => {
   //     })
   //   );
 
-  //   setup();
-
-  //   const emailInput = screen.getByPlaceholderText(
-  //     /Enter Email/i
-  //   ) as HTMLInputElement;
-  //   const passwordInput = screen.getByPlaceholderText(
-  //     /Enter Password/i
-  //   ) as HTMLInputElement;
-  //   await userEvent.type(emailInput, "user56@mail.com");
-  //   await userEvent.type(passwordInput, "123456");
-  //   const button = screen.queryByRole("button", {
-  //     name: /Submit/i,
-  //   }) as HTMLButtonElement;
+  // await newSetup();
   //   expect(screen.queryByRole("status")).not.toBeInTheDocument();
   //   await userEvent.click(button);
   //   await waitFor(() => {

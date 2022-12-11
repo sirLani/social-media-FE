@@ -38,4 +38,14 @@ export const handlers = [
       })
     );
   }),
+
+  rest.post("/forgot-password", (req, res, ctx) => {
+    return res(
+      // Respond with a 200 status code
+      ctx.status(200),
+      ctx.json({
+        success: "Congrats. Now you can login with your new password",
+      })
+    );
+  }),
 ];
