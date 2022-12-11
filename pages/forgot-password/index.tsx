@@ -6,6 +6,7 @@ import { SyncOutlined } from "@ant-design/icons";
 import styles from "../../styles/register.module.css";
 
 import Link from "next/link";
+import { forgotPasswordApi } from "./api";
 
 const ForgotPassword = () => {
   const [form, setForm] = useState({
@@ -25,27 +26,23 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     const { email, newPassword, secret } = form;
-    try {
-      const { data } = await axios.post(`/forgot-password`, {
-        email,
-        newPassword,
-        secret,
+
+    const response = await forgotPasswordApi({
+      email,
+      newPassword,
+      secret,
+    });
+    if (response.error) {
+      toast.error(response.error);
+      setLoading(false);
+    }
+    if (response.success) {
+      setOK(true);
+      setForm({
+        email: "",
+        newPassword: "",
+        secret: "",
       });
-      if (data.error) {
-        toast.error(data.error);
-        setLoading(false);
-      }
-      if (data.success) {
-        setOK(true);
-        setForm({
-          email: "",
-          newPassword: "",
-          secret: "",
-        });
-        setLoading(false);
-      }
-    } catch (err: any) {
-      toast.error(err.response.data);
       setLoading(false);
     }
   };

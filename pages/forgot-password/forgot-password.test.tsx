@@ -1,11 +1,14 @@
 import {
   render,
   screen,
+  waitFor,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 
 import userEvent from "@testing-library/user-event";
 import ForgotPassword from ".";
+import { server } from "../../mocks/server";
+import { rest } from "msw";
 
 jest.mock("next/router", () => ({
   useRouter() {
@@ -70,6 +73,29 @@ describe("Forgot password Page", () => {
     });
   });
   describe("Interactions", () => {
+    let button: HTMLButtonElement;
+    let emailInput: HTMLInputElement;
+    let passwordInput: HTMLInputElement;
+    let secretInput: HTMLInputElement;
+
+    const newSetup = async () => {
+      setup();
+      emailInput = screen.getByPlaceholderText(
+        /Enter Email/i
+      ) as HTMLInputElement;
+      passwordInput = screen.getByPlaceholderText(
+        /Enter Password/i
+      ) as HTMLInputElement;
+      secretInput = screen.getByPlaceholderText(
+        /Write your secret answer here/i
+      ) as HTMLInputElement;
+      await userEvent.type(emailInput, "user@mail.com");
+      await userEvent.type(passwordInput, "123456");
+      await userEvent.type(secretInput, "red");
+      button = screen.queryByRole("button", {
+        name: /Submit/i,
+      }) as HTMLButtonElement;
+    };
     it("email input takes value when typed", async () => {
       setup();
       const emailInput = screen.getByPlaceholderText(
@@ -103,22 +129,7 @@ describe("Forgot password Page", () => {
       expect(button).toBeDisabled();
     });
     it("enables button when email and password inputs are filled", async () => {
-      setup();
-      const emailInput = screen.getByPlaceholderText(
-        /Enter Email/i
-      ) as HTMLInputElement;
-      const passwordInput = screen.getByPlaceholderText(
-        /Enter Password/i
-      ) as HTMLInputElement;
-      const secretInput = screen.getByPlaceholderText(
-        /Write your secret answer here/i
-      ) as HTMLInputElement;
-      await userEvent.type(emailInput, "user@mail.com");
-      await userEvent.type(passwordInput, "123456");
-      await userEvent.type(secretInput, "red");
-      const button = screen.queryByRole("button", {
-        name: /Submit/i,
-      }) as HTMLButtonElement;
+      await newSetup();
       expect(button).toBeEnabled();
     });
     it("expect Spinner not to be in the document initially", async () => {
@@ -126,27 +137,60 @@ describe("Forgot password Page", () => {
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
     });
     it("displays spinner while API in progress", async () => {
-      setup();
-      const emailInput = screen.getByPlaceholderText(
-        /Enter Email/i
-      ) as HTMLInputElement;
-      const passwordInput = screen.getByPlaceholderText(
-        /Enter Password/i
-      ) as HTMLInputElement;
-      const secretInput = screen.getByPlaceholderText(
-        /Write your secret answer here/i
-      ) as HTMLInputElement;
-
-      await userEvent.type(emailInput, "user@mail.com");
-      await userEvent.type(passwordInput, "123456");
-      await userEvent.type(secretInput, "red");
-      const button = screen.queryByRole("button", {
-        name: /Submit/i,
-      }) as HTMLButtonElement;
+      await newSetup();
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
       await userEvent.click(button);
-      const loader = screen.getByRole("status");
-      await waitForElementToBeRemoved(loader);
+      expect(screen.queryByRole("status")).toBeInTheDocument();
+      await waitForElementToBeRemoved(screen.getByRole("status"));
+    });
+    it("sends the details to the backend when the button is clicked", async () => {
+      let reqBody;
+      let count = 0;
+      server.use(
+        rest.post("/forgot-password", (req, res, ctx) => {
+          reqBody = req.body;
+          count += 1;
+          return res(ctx.json({ success: true }));
+        })
+      );
+      await newSetup();
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      await userEvent.click(button);
+      expect(screen.queryByRole("status")).toBeInTheDocument();
+      expect(reqBody).toEqual({
+        email: "user@mail.com",
+        newPassword: "123456",
+        secret: "red",
+      });
+      // it calls the function just once
+      expect(count).toEqual(1);
+    });
+    it("disables the button when there is an api call", async () => {
+      await newSetup();
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      await userEvent.click(button);
+      expect(button).toBeDisabled();
+    });
+    it("displays modal when call is successful", async () => {
+      await newSetup();
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      await userEvent.click(button);
+      await waitFor(() => {
+        expect(
+          screen.queryByText(
+            /Congrats you can now login with your new password/i
+          )
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("sets the form to empty when it is successful", async () => {
+      await newSetup();
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      await userEvent.click(button);
+      expect(emailInput).not.toHaveTextContent;
+      expect(passwordInput).not.toHaveTextContent;
+      expect(secretInput).not.toHaveTextContent;
     });
   });
 });
