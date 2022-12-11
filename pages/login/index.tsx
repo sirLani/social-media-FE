@@ -8,6 +8,7 @@ import styles from "../../styles/register.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { UserContext } from "../../context";
+import { loginApi } from "./api";
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -36,35 +37,28 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    console.log("success section");
-
     const { email, password } = form;
     try {
-      const { data } = await axios.post(`/login`, {
-        email,
-        password,
-      });
+      const response = await loginApi(email, password);
 
-      if (data.error) {
-        console.log("error section");
-        toast.error(data.error);
+      if (response?.error) {
+        toast.error(response.error);
         setLoading(false);
       } else {
         // update context
         setState({
-          user: data.user,
-          token: data.token,
+          user: response?.user,
+          token: response?.token,
         });
         // save in local storage
         setStatus("chang");
-        window.localStorage.setItem("auth", JSON.stringify(data));
+        window.localStorage.setItem("auth", JSON.stringify(response));
         setLoading(false);
 
         // router.push("/");
       }
-    } catch (err: any) {
-      toast.error(err.response.data);
-      setLoading(false);
+    } catch (error) {
+      console.log(error);
     }
   };
 
