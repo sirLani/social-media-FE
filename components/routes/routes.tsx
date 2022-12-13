@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { SyncOutlined } from "@ant-design/icons";
@@ -9,31 +9,28 @@ const UserRoute = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [state] = useContext(UserContext);
 
-  useEffect(() => {
-    if (state?.token) getCurrentUser();
-  }, [state]);
-
-  const getCurrentUser = async () => {
+  const getCurrentUser = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_API}/current-user`,
-        {
-          headers: {
-            Authorization: `Bearer ${state?.token}`,
-          },
-        }
-      );
+      const { data } = await axios.get("/current-user", {
+        headers: {
+          Authorization: `Bearer ${state?.token}`,
+        },
+      });
       if (data.ok) setOk(true);
     } catch (err) {
       router.push("/login");
     }
-  };
+  }, [state?.token, router]);
 
-  process.browser &&
-    state === null &&
+  useEffect(() => {
+    if (state?.token) getCurrentUser();
+  }, [state, getCurrentUser]);
+
+  if (typeof window !== "undefined" && state === null) {
     setTimeout(() => {
       getCurrentUser();
     }, 1000);
+  }
 
   return !ok ? (
     <SyncOutlined

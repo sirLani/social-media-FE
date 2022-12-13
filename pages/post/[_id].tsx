@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useContext } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { toast } from "react-toastify";
-import PostList from "../../components/postList";
 import { UserContext } from "../../context";
 import Link from "next/link";
 import styles from "../../styles/register.module.css";

@@ -87,7 +87,10 @@ describe("Register page", () => {
       nameInput: HTMLInputElement,
       secretInput: HTMLInputElement,
       button: HTMLButtonElement;
-
+    const email = "user@mail.com";
+    const password = "123456";
+    const name = "user";
+    const secret = "red";
     const newSetup = async () => {
       setup();
       emailInput = screen.getByPlaceholderText(
@@ -103,10 +106,10 @@ describe("Register page", () => {
         /Write your secret answer here/i
       ) as HTMLInputElement;
 
-      await userEvent.type(nameInput, "user");
-      await userEvent.type(emailInput, "user@mail.com");
-      await userEvent.type(passwordInput, "123456");
-      await userEvent.type(secretInput, "red");
+      await userEvent.type(nameInput, name);
+      await userEvent.type(emailInput, email);
+      await userEvent.type(passwordInput, password);
+      await userEvent.type(secretInput, secret);
       button = screen.queryByRole("button", {
         name: /Submit/i,
       }) as HTMLButtonElement;
@@ -117,32 +120,32 @@ describe("Register page", () => {
       const nameInput = screen.getByPlaceholderText(
         /Enter name/i
       ) as HTMLInputElement;
-      await userEvent.type(nameInput, "user");
-      expect(nameInput).toHaveValue("user");
+      await userEvent.type(nameInput, name);
+      expect(nameInput).toHaveValue(name);
     });
     it("email input takes value when typed", async () => {
       setup();
       const emailInput = screen.getByPlaceholderText(
         /Enter Email/i
       ) as HTMLInputElement;
-      await userEvent.type(emailInput, "user@mail.com");
-      expect(emailInput).toHaveValue("user@mail.com");
+      await userEvent.type(emailInput, email);
+      expect(emailInput).toHaveValue(email);
     });
     it("password input takes value when typed", async () => {
       setup();
       const passwordInput = screen.getByPlaceholderText(
         /Enter Password/i
       ) as HTMLInputElement;
-      await userEvent.type(passwordInput, "123456");
-      expect(passwordInput).toHaveValue("123456");
+      await userEvent.type(passwordInput, password);
+      expect(passwordInput).toHaveValue(password);
     });
     it("secret input takes value when typed", async () => {
       setup();
       const secretInput = screen.getByPlaceholderText(
         /Write your secret answer here/i
       ) as HTMLInputElement;
-      await userEvent.type(secretInput, "red");
-      expect(secretInput).toHaveValue("red");
+      await userEvent.type(secretInput, secret);
+      expect(secretInput).toHaveValue(secret);
     });
     it("disables button when email and password inputs are not filled", async () => {
       setup();
@@ -180,10 +183,10 @@ describe("Register page", () => {
       await userEvent.click(button);
       expect(screen.queryByRole("status")).toBeInTheDocument();
       expect(reqBody).toEqual({
-        name: "user",
-        email: "user@mail.com",
-        password: "123456",
-        secret: "red",
+        name: name,
+        email: email,
+        password: password,
+        secret: secret,
       });
     });
     it("disables the button when there is an api call", async () => {
