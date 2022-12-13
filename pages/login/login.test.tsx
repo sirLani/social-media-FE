@@ -85,6 +85,9 @@ describe("Login Interactions", () => {
   let emailInput: HTMLInputElement;
   let passwordInput: HTMLInputElement;
 
+  const email = "user@mail.com";
+  const password = "123456";
+
   const newSetup = async () => {
     setup();
     emailInput = screen.getByPlaceholderText(
@@ -93,8 +96,8 @@ describe("Login Interactions", () => {
     passwordInput = screen.getByPlaceholderText(
       /Enter Password/i
     ) as HTMLInputElement;
-    await userEvent.type(emailInput, "user@mail.com");
-    await userEvent.type(passwordInput, "123456");
+    await userEvent.type(emailInput, email);
+    await userEvent.type(passwordInput, password);
     button = screen.queryByRole("button", {
       name: /Submit/i,
     }) as HTMLButtonElement;
@@ -105,8 +108,8 @@ describe("Login Interactions", () => {
     const emailInput = screen.getByPlaceholderText(
       /Enter Email/i
     ) as HTMLInputElement;
-    await userEvent.type(emailInput, "user@mail.com");
-    expect(emailInput).toHaveValue("user@mail.com");
+    await userEvent.type(emailInput, email);
+    expect(emailInput).toHaveValue(email);
   });
 
   it("password input takes value when typed", async () => {
@@ -114,8 +117,8 @@ describe("Login Interactions", () => {
     const passwordInput = screen.getByPlaceholderText(
       /Enter Password/i
     ) as HTMLInputElement;
-    await userEvent.type(passwordInput, "123456");
-    expect(passwordInput).toHaveValue("123456");
+    await userEvent.type(passwordInput, password);
+    expect(passwordInput).toHaveValue(password);
   });
 
   it("disables button when email and password inputs are not filled", async () => {
@@ -157,8 +160,8 @@ describe("Login Interactions", () => {
     await userEvent.click(button);
     expect(screen.queryByRole("status")).toBeInTheDocument();
     expect(reqBody).toEqual({
-      email: "user@mail.com",
-      password: "123456",
+      email: email,
+      password: password,
     });
     // it calls the function just once
     expect(count).toEqual(1);

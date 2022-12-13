@@ -1,10 +1,7 @@
-import Head from "next/head";
-import Image from "next/image";
-import { useRouter } from "next/router";
 import { useCallback, useContext, useEffect, useState } from "react";
 import CreatePostForm from "../../components/createPostForm";
 import UserRoute from "../../components/routes/routes";
-import { IComment, UserContext, userItem } from "../../context";
+import { UserContext } from "../../context";
 import styles from "../../styles/register.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -13,6 +10,7 @@ import { Avatar, List, Modal, Pagination, PaginationProps } from "antd";
 import Link from "next/link";
 import { imageSource } from "../../helpers";
 import Search from "../../components/search";
+import { IComment, userItem } from "../../helpers/helper.types";
 
 export default function Dashboard() {
   const [state, setState] = useContext(UserContext);
@@ -32,9 +30,6 @@ export default function Dashboard() {
 
   const [totalPosts, setTotalPosts] = useState(0);
   const [page, setPage] = useState(1);
-
-  // route
-  const router = useRouter();
 
   const newsFeed = useCallback(async () => {
     try {

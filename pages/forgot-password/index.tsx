@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { Modal } from "antd";
 import { SyncOutlined } from "@ant-design/icons";

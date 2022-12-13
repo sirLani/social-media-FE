@@ -77,6 +77,10 @@ describe("Forgot password Page", () => {
     let emailInput: HTMLInputElement;
     let passwordInput: HTMLInputElement;
     let secretInput: HTMLInputElement;
+    const email = "user@mail.com";
+    const password = "123456";
+
+    const secret = "red";
 
     const newSetup = async () => {
       setup();
@@ -89,9 +93,9 @@ describe("Forgot password Page", () => {
       secretInput = screen.getByPlaceholderText(
         /Write your secret answer here/i
       ) as HTMLInputElement;
-      await userEvent.type(emailInput, "user@mail.com");
-      await userEvent.type(passwordInput, "123456");
-      await userEvent.type(secretInput, "red");
+      await userEvent.type(emailInput, email);
+      await userEvent.type(passwordInput, password);
+      await userEvent.type(secretInput, secret);
       button = screen.queryByRole("button", {
         name: /Submit/i,
       }) as HTMLButtonElement;
@@ -101,24 +105,24 @@ describe("Forgot password Page", () => {
       const emailInput = screen.getByPlaceholderText(
         /Enter Email/i
       ) as HTMLInputElement;
-      await userEvent.type(emailInput, "user@mail.com");
-      expect(emailInput).toHaveValue("user@mail.com");
+      await userEvent.type(emailInput, email);
+      expect(emailInput).toHaveValue(email);
     });
     it("password input takes value when typed", async () => {
       setup();
       const passwordInput = screen.getByPlaceholderText(
         /Enter Password/i
       ) as HTMLInputElement;
-      await userEvent.type(passwordInput, "123456");
-      expect(passwordInput).toHaveValue("123456");
+      await userEvent.type(passwordInput, password);
+      expect(passwordInput).toHaveValue(password);
     });
     it("secret input takes value when typed", async () => {
       setup();
       const secretInput = screen.getByPlaceholderText(
         /Write your secret answer here/i
       ) as HTMLInputElement;
-      await userEvent.type(secretInput, "red");
-      expect(secretInput).toHaveValue("red");
+      await userEvent.type(secretInput, secret);
+      expect(secretInput).toHaveValue(secret);
     });
 
     it("disables button when email and password inputs are not filled", async () => {
@@ -158,9 +162,9 @@ describe("Forgot password Page", () => {
       await userEvent.click(button);
       expect(screen.queryByRole("status")).toBeInTheDocument();
       expect(reqBody).toEqual({
-        email: "user@mail.com",
-        newPassword: "123456",
-        secret: "red",
+        email: email,
+        newPassword: password,
+        secret: secret,
       });
       // it calls the function just once
       expect(count).toEqual(1);
