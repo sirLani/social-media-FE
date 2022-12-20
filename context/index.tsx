@@ -13,12 +13,16 @@ type IUserProps = [
   React.Dispatch<React.SetStateAction<UserProps | undefined>>
 ];
 
-const UserContext = createContext<IUserProps>([
+export const UserContext = createContext<IUserProps>([
   { user: {}, token: "" },
   () => null,
 ]);
 
-const UserProvider = ({ children }: { children: React.ReactNode }) => {
+export default function UserProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [state, setState] = useState<UserProps | undefined>({
     user: {},
     token: "",
@@ -55,6 +59,6 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </UserContext.Provider>
   );
-};
+}
 
-export { UserContext, UserProvider };
+export { UserProvider };

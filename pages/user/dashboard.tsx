@@ -50,7 +50,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     try {
-      axios.get("/total-posts").then(({ data }) => setTotalPosts(data));
+      axios.get("/total-posts").then((data) => setTotalPosts(data?.data));
     } catch (err) {
       console.log(err);
     }
@@ -207,94 +207,98 @@ export default function Dashboard() {
 
   return (
     <UserRoute>
-      <div className="container-fluid">
-        <div
-          className={`${styles.bg_default_image} row py-5  text-light bg-default-image`}
-        >
-          <div className="col text-center">
-            <h1>Newsfeed</h1>
-          </div>
-        </div>
-
-        <div className="row py-3">
-          <div className="col-md-8">
-            <CreatePostForm
-              content={content}
-              setContent={setContent}
-              postSubmit={postSubmit}
-              handleImage={handleImage}
-              uploading={uploading}
-              image={image}
-            />
-            <br />
-            <PostList
-              handleLike={handleLike}
-              handleUnlike={handleUnlike}
-              posts={posts}
-              handleDelete={handleDelete}
-              handleComment={handleComment}
-              removeComment={removeComment}
-            />
-            <Pagination
-              current={page}
-              onChange={onChange}
-              total={Math.round(totalPosts / 3) * 10}
-            />
+      <div>
+        <div className="container-fluid">
+          <div
+            className={`${styles.bg_default_image} row py-5  text-light bg-default-image`}
+          >
+            <div className="col text-center">
+              <h1>Newsfeed</h1>
+            </div>
           </div>
 
-          <div className="col-md-4">
-            <Search handleFollow={handleFollow} />
-
-            {state && state.user && state.user.following && (
-              <Link className="h6" href={`/user/following`}>
-                {state.user.following.length} Following
-              </Link>
-            )}
-            <List
-              itemLayout="horizontal"
-              dataSource={people}
-              renderItem={(user) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar src={imageSource(user)} />}
-                    title={
-                      <div className="d-flex justify-content-between">
-                        <Link href={`/user/${user.username}`}>
-                          {user.username}
-                        </Link>
-                        <span
-                          onClick={() => handleFollow(user)}
-                          className={`text-primary ${styles.pointer}`}
-                        >
-                          Follow
-                        </span>
-                      </div>
-                    }
-                  />
-                </List.Item>
+          <div className="row py-3">
+            <div className="col-md-8">
+              <CreatePostForm
+                content={content}
+                setContent={setContent}
+                postSubmit={postSubmit}
+                handleImage={handleImage}
+                uploading={uploading}
+                image={image}
+              />
+              <br />
+              <PostList
+                handleLike={handleLike}
+                handleUnlike={handleUnlike}
+                posts={posts}
+                handleDelete={handleDelete}
+                handleComment={handleComment}
+                removeComment={removeComment}
+              />
+              {totalPosts && (
+                <Pagination
+                  current={page}
+                  onChange={onChange}
+                  total={Math.round(totalPosts / 3) * 10}
+                />
               )}
-            />
+            </div>
+
+            <div className="col-md-4">
+              <Search handleFollow={handleFollow} />
+
+              {state && state.user && state.user.following && (
+                <Link className="h6" href={`/user/following`}>
+                  {state.user.following.length} Following
+                </Link>
+              )}
+              <List
+                itemLayout="horizontal"
+                dataSource={people}
+                renderItem={(user) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={<Avatar src={imageSource(user)} />}
+                      title={
+                        <div className="d-flex justify-content-between">
+                          <Link href={`/user/${user.username}`}>
+                            {user.username}
+                          </Link>
+                          <span
+                            onClick={() => handleFollow(user)}
+                            className={`text-primary ${styles.pointer}`}
+                          >
+                            Follow
+                          </span>
+                        </div>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
+            </div>
           </div>
+          <Modal
+            open={visible}
+            onCancel={() => setVisible(false)}
+            title="Comment"
+            footer={null}
+          >
+            <form onSubmit={addComment}>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Write something..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+              <button className="btn btn-primary btn-sm btn-block mt-3">
+                Submit
+              </button>
+            </form>
+          </Modal>
         </div>
-        <Modal
-          open={visible}
-          onCancel={() => setVisible(false)}
-          title="Comment"
-          footer={null}
-        >
-          <form onSubmit={addComment}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Write something..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <button className="btn btn-primary btn-sm btn-block mt-3">
-              Submit
-            </button>
-          </form>
-        </Modal>
       </div>
     </UserRoute>
   );
