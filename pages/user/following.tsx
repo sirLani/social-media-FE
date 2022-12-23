@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import styles from "../../styles/register.module.css";
 import { imageSource } from "../../helpers";
 import { userItem } from "../../helpers/helper.types";
+import { handleUnfollowApi } from "./api";
 
 const Following = () => {
   const [state, setState] = useContext(UserContext);
@@ -31,10 +32,7 @@ const Following = () => {
 
   const handleUnfollow = async (user: userItem) => {
     try {
-      const { data } = await axios.put("/user-unfollow", { _id: user._id });
-      let auth = JSON.parse(localStorage.getItem("auth") as string);
-      auth.user = data;
-      localStorage.setItem("auth", JSON.stringify(auth));
+      const { data } = await handleUnfollowApi(user);
       // update context
       setState({ ...state, user: data });
       // update people state

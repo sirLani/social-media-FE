@@ -11,6 +11,7 @@ import Link from "next/link";
 import { imageSource } from "../../helpers";
 import Search from "../../components/search";
 import { IComment, userItem } from "../../helpers/helper.types";
+import { findPeopleApi, newsFeedApi, submitPostsApi } from "./api";
 
 export default function Dashboard() {
   const [state, setState] = useContext(UserContext);
@@ -32,13 +33,8 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
 
   const newsFeed = useCallback(async () => {
-    try {
-      const { data } = await axios.get(`/news-feed/${page}`);
-      console.log("user posts => ", data);
-      setPosts(data);
-    } catch (err) {
-      console.log(err);
-    }
+    const data = await newsFeedApi(page);
+    setPosts(data);
   }, [page]);
 
   useEffect(() => {
@@ -57,32 +53,23 @@ export default function Dashboard() {
   }, []);
 
   const findPeople = async () => {
-    try {
-      const { data } = await axios.get("/find-people");
-      setPeople(data);
-    } catch (err) {
-      console.log(err);
-    }
+    const data = await findPeopleApi();
+    setPeople(data);
   };
 
   const postSubmit = async (
     e: React.FormEvent<HTMLFormElement | HTMLButtonElement>
   ) => {
     e.preventDefault();
-    // console.log("post => ", content);
-    try {
-      const { data } = await axios.post("/create-post", { content, image });
-      console.log("create post response => ", data);
-      if (data.error) {
-        toast.error(data.error);
-      } else {
-        newsFeed();
-        toast.success("Post created");
-        setContent("");
-        setImage({});
-      }
-    } catch (err) {
-      console.log(err);
+
+    const data = await submitPostsApi({ content, image });
+    if (data.error) {
+      toast.error(data.error);
+    } else {
+      newsFeed();
+      toast.success("Post created");
+      setContent("");
+      setImage({});
     }
   };
 
@@ -91,12 +78,12 @@ export default function Dashboard() {
     const file: File = (target.files as FileList)[0];
     let formData = new FormData();
     formData.append("image", file);
-    // console.log([...formData]);
+
     setUploading(true);
 
     try {
       const { data } = await axios.post("/upload-image", formData);
-      // console.log("uploaded image => ", data);
+
       setImage({
         url: data.url,
         public_id: data.public_id,
@@ -121,7 +108,6 @@ export default function Dashboard() {
   };
 
   const handleFollow = async (user: userItem) => {
-    // console.log("add this user to following list ", user);
     try {
       const { data } = await axios.put("/user-follow", { _id: user._id });
       console.log("handle follow response => ", data);
@@ -145,7 +131,6 @@ export default function Dashboard() {
   const handleLike = async (post: userItem) => {
     try {
       const { data } = await axios.put("/like-post", { _id: post._id });
-      console.log("liked", data);
       newsFeed();
     } catch (err) {
       console.log(err);
@@ -153,10 +138,8 @@ export default function Dashboard() {
   };
 
   const handleUnlike = async (post: userItem) => {
-    // console.log("unlike this post => ", _id);
     try {
       const { data } = await axios.put("/unlike-post", { _id: post._id });
-      console.log("unliked", data);
       newsFeed();
     } catch (err) {
       console.log(err);
