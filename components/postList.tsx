@@ -56,7 +56,7 @@ const PostList = ({
             <div className="card-footer">
               {post.image && <PostImage url={post.image.url} />}
               <div className="d-flex pt-2">
-                {post.likes.includes(state?.user._id as string) ? (
+                {post.likes.includes(state?.user?._id as string) ? (
                   <HeartFilled
                     onClick={() => handleUnlike(post)}
                     className="text-danger pt-2 h5 px-2"

@@ -2,11 +2,12 @@ import { useContext, useState, useEffect, useCallback } from "react";
 import { Avatar, Card } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { UserContext, userItem } from "../../context";
+import { UserContext } from "../../context";
 import axios from "axios";
 import { RollbackOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import Image from "next/image";
+import { userItem } from "../../helpers/helper.types";
 
 const { Meta } = Card; // <Card.Meta>
 
