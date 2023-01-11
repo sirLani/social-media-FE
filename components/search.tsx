@@ -1,11 +1,12 @@
-import { useState, useContext } from "react";
-import { UserContext, userItem } from "../context";
-import axios from "axios";
-import { Avatar, List } from "antd";
-import { imageSource } from "../helpers";
-import styles from "../styles/register.module.css";
-import { toast } from "react-toastify";
-import Link from "next/link";
+import { useState, useContext } from 'react';
+import { UserContext } from '../context';
+import axios from 'axios';
+import { Avatar, List } from 'antd';
+import { imageSource } from '../helpers';
+import styles from '../styles/register.module.css';
+import { toast } from 'react-toastify';
+import Link from 'next/link';
+import { userItem } from '../helpers/helper.types';
 
 type ISearch = {
   handleFollow: (e: userItem) => void;
@@ -14,7 +15,7 @@ type ISearch = {
 const Search = ({ handleFollow }: ISearch) => {
   const [state, setState] = useContext(UserContext);
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [result, setResult] = useState<userItem[]>();
 
   const searchUser = async (
@@ -31,10 +32,10 @@ const Search = ({ handleFollow }: ISearch) => {
 
   const handleUnfollow = async (user: userItem) => {
     try {
-      const { data } = await axios.put("/user-unfollow", { _id: user._id });
-      let auth = JSON.parse(localStorage.getItem("auth") as string);
+      const { data } = await axios.put('/user-unfollow', { _id: user._id });
+      let auth = JSON.parse(localStorage.getItem('auth') as string);
       auth.user = data;
-      localStorage.setItem("auth", JSON.stringify(auth));
+      localStorage.setItem('auth', JSON.stringify(auth));
       // update context
       setState({ ...state, user: data });
       // update people state

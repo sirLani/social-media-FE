@@ -1,21 +1,20 @@
 // import renderHTML from "react-render-html";
-import moment from "moment";
-import { Avatar } from "antd";
-import Image from "next/image";
-import PostImage from "./postImage";
+import moment from 'moment';
+import { Avatar } from 'antd';
+import PostImage from './postImage';
 import {
   CommentOutlined,
   HeartOutlined,
   HeartFilled,
   EditOutlined,
   DeleteOutlined,
-} from "@ant-design/icons";
-import { useContext } from "react";
-import { UserContext } from "../context";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { imageSource } from "../helpers";
-import { IComment, IProps, userItem } from "../helpers/helper.types";
+} from '@ant-design/icons';
+import { useContext } from 'react';
+import { UserContext } from '../context';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { imageSource } from '../helpers';
+import { IComment, IProps, userItem } from '../helpers/helper.types';
 
 export interface Iposts {
   posts: IProps[];
@@ -45,10 +44,10 @@ const PostList = ({
           <div key={post._id} className="card mb-5">
             <div className="card-header">
               <Avatar size={40}>{post.postedBy.name[0]}</Avatar>
-              <span className="pt-2 ml-3" style={{ marginLeft: "1rem" }}>
+              <span className="pt-2 ml-3" style={{ marginLeft: '1rem' }}>
                 {post.postedBy.name}
               </span>
-              <span className="pt-2 ml-3" style={{ marginLeft: "1rem" }}>
+              <span className="pt-2 ml-3" style={{ marginLeft: '1rem' }}>
                 {moment(post.createdAt).fromNow()}
               </span>
             </div>
@@ -68,7 +67,7 @@ const PostList = ({
                   />
                 )}
 
-                <div className="pt-2 pl-3" style={{ marginRight: "1rem" }}>
+                <div className="pt-2 pl-3" style={{ marginRight: '1rem' }}>
                   {post.likes.length} likes
                 </div>
                 <CommentOutlined
