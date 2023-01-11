@@ -1,18 +1,18 @@
-import { useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
-import { SyncOutlined } from "@ant-design/icons";
-import styles from "../../styles/register.module.css";
+import { SyncOutlined } from '@ant-design/icons';
+import styles from '../../styles/register.module.css';
 
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { UserContext } from "../../context";
-import { loginApi } from "./api";
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { UserContext } from '../../context';
+import { loginApi } from '../../api/login/api';
 
 const Login = () => {
   const [form, setForm] = useState({
-    password: "",
-    email: "",
+    password: '',
+    email: '',
   });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -48,13 +48,13 @@ const Login = () => {
         user: response?.user,
         token: response?.token,
       });
-      window.localStorage.setItem("auth", JSON.stringify(response));
+      window.localStorage.setItem('auth', JSON.stringify(response));
       setLoading(false);
       setRedirect(true);
     }
   };
 
-  if (redirect) router.push("/");
+  if (redirect) router.push('/');
 
   return (
     <div className="container-fluid">
@@ -113,7 +113,7 @@ const Login = () => {
                     <SyncOutlined spin />
                   </span>
                 ) : (
-                  "Submit"
+                  'Submit'
                 )}
               </button>
             </div>

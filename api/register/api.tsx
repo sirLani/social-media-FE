@@ -1,5 +1,5 @@
-import axios from "axios";
-import { RegisterProps } from "./entity";
+import axios from 'axios';
+import { RegisterProps } from './entity';
 
 export const registerApi = async ({
   name,

@@ -1,5 +1,5 @@
-import axios from "axios";
-import { IForgotPassword } from "./entity";
+import axios from 'axios';
+import { IForgotPassword } from './entity';
 
 export const forgotPasswordApi = async ({
   email,

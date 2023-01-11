@@ -1,15 +1,15 @@
-import { useContext, useState, useEffect } from "react";
-import { Avatar, List } from "antd";
+import { useContext, useState, useEffect } from 'react';
+import { Avatar, List } from 'antd';
 
-import { UserContext } from "../../context";
-import axios from "axios";
-import { RollbackOutlined } from "@ant-design/icons";
-import Link from "next/link";
-import { toast } from "react-toastify";
-import styles from "../../styles/register.module.css";
-import { imageSource } from "../../helpers";
-import { userItem } from "../../helpers/helper.types";
-import { handleUnfollowApi } from "./api";
+import { UserContext } from '../../context';
+import axios from 'axios';
+import { RollbackOutlined } from '@ant-design/icons';
+import Link from 'next/link';
+import { toast } from 'react-toastify';
+import styles from '../../styles/register.module.css';
+import { imageSource } from '../../helpers';
+import { userItem } from '../../helpers/helper.types';
+import { handleUnfollowApi } from '../../api/user/api';
 
 const Following = () => {
   const [state, setState] = useContext(UserContext);
@@ -22,8 +22,8 @@ const Following = () => {
 
   const fetchFollowing = async () => {
     try {
-      const { data } = await axios.get("/user-following");
-      console.log("following => ", data);
+      const { data } = await axios.get('/user-following');
+      console.log('following => ', data);
       setPeople(data);
     } catch (err) {
       console.log(err);

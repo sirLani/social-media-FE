@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { Modal } from "antd";
-import { SyncOutlined } from "@ant-design/icons";
-import styles from "../../styles/register.module.css";
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { Modal } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
+import styles from '../../styles/register.module.css';
 
-import Link from "next/link";
-import { registerApi } from "./api";
+import Link from 'next/link';
+import { registerApi } from '../../api/register/api';
 
 const Register = () => {
   const [form, setForm] = useState({
-    password: "",
-    email: "",
-    name: "",
-    secret: "",
+    password: '',
+    email: '',
+    name: '',
+    secret: '',
   });
   const [ok, setOK] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,10 +32,10 @@ const Register = () => {
     } else {
       setOK(response.ok);
       setForm({
-        email: "",
-        password: "",
-        name: "",
-        secret: "",
+        email: '',
+        password: '',
+        name: '',
+        secret: '',
       });
       setLoading(false);
     }
@@ -150,7 +150,7 @@ const Register = () => {
                     <SyncOutlined spin />
                   </span>
                 ) : (
-                  "Submit"
+                  'Submit'
                 )}
               </button>
             </div>

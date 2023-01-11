@@ -1,5 +1,5 @@
-import axios from "axios";
-import { LoginProp } from "./entity";
+import axios from 'axios';
+import { LoginProp } from './entity';
 
 export const loginApi = async ({ email, password }: LoginProp) => {
   try {

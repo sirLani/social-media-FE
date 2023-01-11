@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { Modal } from "antd";
-import { SyncOutlined } from "@ant-design/icons";
-import styles from "../../styles/register.module.css";
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { Modal } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
+import styles from '../../styles/register.module.css';
 
-import Link from "next/link";
-import { forgotPasswordApi } from "./api";
+import Link from 'next/link';
+import { forgotPasswordApi } from '../../api/forgot-password/api';
 
 const ForgotPassword = () => {
   const [form, setForm] = useState({
-    newPassword: "",
-    email: "",
-    secret: "",
+    newPassword: '',
+    email: '',
+    secret: '',
   });
   const [ok, setOK] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,9 +38,9 @@ const ForgotPassword = () => {
     if (response.success) {
       setOK(true);
       setForm({
-        email: "",
-        newPassword: "",
-        secret: "",
+        email: '',
+        newPassword: '',
+        secret: '',
       });
       setLoading(false);
     }
@@ -133,7 +133,7 @@ const ForgotPassword = () => {
                     <SyncOutlined spin />
                   </span>
                 ) : (
-                  "Submit"
+                  'Submit'
                 )}
               </button>
             </div>

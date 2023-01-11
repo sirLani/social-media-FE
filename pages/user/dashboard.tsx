@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { imageSource } from '../../helpers';
 import Search from '../../components/search';
 import { IComment, userItem } from '../../helpers/helper.types';
-import { findPeopleApi, newsFeedApi, submitPostsApi } from './api';
+import { findPeopleApi, newsFeedApi, submitPostsApi } from '../../api/user/api';
 
 export default function Dashboard() {
   const [state, setState] = useContext(UserContext);
