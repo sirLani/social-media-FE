@@ -4,7 +4,7 @@ import {
   waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
-import Login from '.';
+import Login from '../../pages/login';
 import userEvent from '@testing-library/user-event';
 import { server } from '../../mocks/server';
 import { rest } from 'msw';

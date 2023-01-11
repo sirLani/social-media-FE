@@ -1,23 +1,22 @@
-import { useState, useContext, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { Modal } from "antd";
-import Link from "next/link";
-import { UserContext } from "../../../context";
-import { useRouter } from "next/router";
+import { useState, useContext } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { Modal } from 'antd';
+import { UserContext } from '../../../context';
+import { useRouter } from 'next/router';
 import {
   CameraOutlined,
   LoadingOutlined,
   SyncOutlined,
-} from "@ant-design/icons";
-import styles from "../../../styles/register.module.css";
-import Avatar from "antd/es/avatar/avatar";
-import { Iimage } from "../../../helpers/helper.types";
+} from '@ant-design/icons';
+import styles from '../../../styles/register.module.css';
+import Avatar from 'antd/es/avatar/avatar';
+import { Iimage } from '../../../helpers/helper.types';
 
 const ProfileUpdate = () => {
   const [state, setState] = useContext(UserContext);
   const [form, setForm] = useState({
-    password: "",
+    password: '',
     email: state?.user.email as string,
     name: state?.user.name as string,
     secret: state?.user.secret as string,
@@ -62,9 +61,9 @@ const ProfileUpdate = () => {
         setLoading(false);
       } else {
         // update local storage, update user, keep token
-        let auth = JSON.parse(localStorage.getItem("auth") as string);
+        let auth = JSON.parse(localStorage.getItem('auth') as string);
         auth.user = data;
-        localStorage.setItem("auth", JSON.stringify(auth));
+        localStorage.setItem('auth', JSON.stringify(auth));
         // update context
         setState({ ...state, user: data });
         setOK(true);
@@ -81,11 +80,11 @@ const ProfileUpdate = () => {
     const file: File = (target.files as FileList)[0];
 
     let formData = new FormData();
-    formData.append("image", file);
+    formData.append('image', file);
     // console.log([...formData]);
     setUploading(true);
     try {
-      const { data } = await axios.post("/upload-image", formData);
+      const { data } = await axios.post('/upload-image', formData);
       // console.log("uploaded image => ", data);
       setImage({
         url: data.url,
@@ -225,7 +224,7 @@ const ProfileUpdate = () => {
 
                 <div className="form-group p-2">
                   <button disabled={loading} className="btn btn-primary col-12">
-                    {loading ? <SyncOutlined spin /> : "Submit"}
+                    {loading ? <SyncOutlined spin /> : 'Submit'}
                   </button>
                 </div>
               </form>
