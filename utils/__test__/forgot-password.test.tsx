@@ -3,17 +3,17 @@ import {
   screen,
   waitFor,
   waitForElementToBeRemoved,
-} from "@testing-library/react";
+} from '@testing-library/react';
 
-import userEvent from "@testing-library/user-event";
-import ForgotPassword from ".";
-import { server } from "../../mocks/server";
-import { rest } from "msw";
+import userEvent from '@testing-library/user-event';
+import ForgotPassword from '../../pages/forgot-password';
+import { server } from '../../mocks/server';
+import { rest } from 'msw';
 
-jest.mock("next/router", () => ({
+jest.mock('next/router', () => ({
   useRouter() {
     return {
-      pathname: "",
+      pathname: '',
       // ... whatever else you you call on `router`
     };
   },
@@ -23,64 +23,64 @@ const setup = () => {
   render(<ForgotPassword />);
 };
 
-describe("Forgot password Page", () => {
-  describe("Implementations", () => {
-    it("renders login header", () => {
+describe('Forgot password Page', () => {
+  describe('Implementations', () => {
+    it('renders login header', () => {
       setup();
-      const header = screen.queryByRole("heading", {
+      const header = screen.queryByRole('heading', {
         name: /Forgot Password/i,
       });
       expect(header).toBeInTheDocument();
     });
-    it("has email input", () => {
+    it('has email input', () => {
       setup();
       const emailInput = screen.getByPlaceholderText(/Enter Email/i);
       expect(emailInput).toBeInTheDocument();
     });
-    it("has email label", () => {
+    it('has email label', () => {
       setup();
       const emailLabel = screen.getByLabelText(/Email/i);
       expect(emailLabel).toBeInTheDocument();
     });
-    it("has password input", () => {
+    it('has password input', () => {
       setup();
       const passwordInput = screen.getByPlaceholderText(/Enter Password/i);
       expect(passwordInput).toBeInTheDocument();
     });
-    it("has password label", () => {
+    it('has password label', () => {
       setup();
       const passwordLabel = screen.getByLabelText(/Password/i);
       expect(passwordLabel).toBeInTheDocument();
     });
-    it("has password type for password input", () => {
+    it('has password type for password input', () => {
       setup();
       const passwordInput = screen.getByPlaceholderText(
         /Enter Password/i
       ) as HTMLInputElement;
-      expect(passwordInput.type).toBe("password");
+      expect(passwordInput.type).toBe('password');
     });
-    it("has secret input", () => {
+    it('has secret input', () => {
       setup();
       const secretInput = screen.getByPlaceholderText(
         /Write your secret answer here/i
       );
       expect(secretInput).toBeInTheDocument();
     });
-    it("has secret label", () => {
+    it('has secret label', () => {
       setup();
       const secretLabel = screen.getByLabelText(/Pick a question/i);
       expect(secretLabel).toBeInTheDocument();
     });
   });
-  describe("Interactions", () => {
+  describe('Interactions', () => {
     let button: HTMLButtonElement;
     let emailInput: HTMLInputElement;
     let passwordInput: HTMLInputElement;
     let secretInput: HTMLInputElement;
-    const email = "user@mail.com";
-    const password = "123456";
+    const email = 'user@mail.com';
+    const password = '123456';
 
-    const secret = "red";
+    const secret = 'red';
 
     const newSetup = async () => {
       setup();
@@ -96,11 +96,11 @@ describe("Forgot password Page", () => {
       await userEvent.type(emailInput, email);
       await userEvent.type(passwordInput, password);
       await userEvent.type(secretInput, secret);
-      button = screen.queryByRole("button", {
+      button = screen.queryByRole('button', {
         name: /Submit/i,
       }) as HTMLButtonElement;
     };
-    it("email input takes value when typed", async () => {
+    it('email input takes value when typed', async () => {
       setup();
       const emailInput = screen.getByPlaceholderText(
         /Enter Email/i
@@ -108,7 +108,7 @@ describe("Forgot password Page", () => {
       await userEvent.type(emailInput, email);
       expect(emailInput).toHaveValue(email);
     });
-    it("password input takes value when typed", async () => {
+    it('password input takes value when typed', async () => {
       setup();
       const passwordInput = screen.getByPlaceholderText(
         /Enter Password/i
@@ -116,7 +116,7 @@ describe("Forgot password Page", () => {
       await userEvent.type(passwordInput, password);
       expect(passwordInput).toHaveValue(password);
     });
-    it("secret input takes value when typed", async () => {
+    it('secret input takes value when typed', async () => {
       setup();
       const secretInput = screen.getByPlaceholderText(
         /Write your secret answer here/i
@@ -125,42 +125,42 @@ describe("Forgot password Page", () => {
       expect(secretInput).toHaveValue(secret);
     });
 
-    it("disables button when email and password inputs are not filled", async () => {
+    it('disables button when email and password inputs are not filled', async () => {
       setup();
-      const button = screen.queryByRole("button", {
+      const button = screen.queryByRole('button', {
         name: /Submit/i,
       }) as HTMLButtonElement;
       expect(button).toBeDisabled();
     });
-    it("enables button when email and password inputs are filled", async () => {
+    it('enables button when email and password inputs are filled', async () => {
       await newSetup();
       expect(button).toBeEnabled();
     });
-    it("expect Spinner not to be in the document initially", async () => {
+    it('expect Spinner not to be in the document initially', async () => {
       setup();
-      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
-    it("displays spinner while API in progress", async () => {
+    it('displays spinner while API in progress', async () => {
       await newSetup();
-      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
       await userEvent.click(button);
-      expect(screen.queryByRole("status")).toBeInTheDocument();
-      await waitForElementToBeRemoved(screen.getByRole("status"));
+      expect(screen.queryByRole('status')).toBeInTheDocument();
+      await waitForElementToBeRemoved(screen.getByRole('status'));
     });
-    it("sends the details to the backend when the button is clicked", async () => {
+    it('sends the details to the backend when the button is clicked', async () => {
       let reqBody;
       let count = 0;
       server.use(
-        rest.post("/forgot-password", (req, res, ctx) => {
+        rest.post('/forgot-password', (req, res, ctx) => {
           reqBody = req.body;
           count += 1;
           return res(ctx.json({ success: true }));
         })
       );
       await newSetup();
-      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
       await userEvent.click(button);
-      expect(screen.queryByRole("status")).toBeInTheDocument();
+      expect(screen.queryByRole('status')).toBeInTheDocument();
       expect(reqBody).toEqual({
         email: email,
         newPassword: password,
@@ -169,15 +169,15 @@ describe("Forgot password Page", () => {
       // it calls the function just once
       expect(count).toEqual(1);
     });
-    it("disables the button when there is an api call", async () => {
+    it('disables the button when there is an api call', async () => {
       await newSetup();
-      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
       await userEvent.click(button);
       expect(button).toBeDisabled();
     });
-    it("displays modal when call is successful", async () => {
+    it('displays modal when call is successful', async () => {
       await newSetup();
-      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
       await userEvent.click(button);
       await waitFor(() => {
         expect(
@@ -188,9 +188,9 @@ describe("Forgot password Page", () => {
       });
     });
 
-    it("sets the form to empty when it is successful", async () => {
+    it('sets the form to empty when it is successful', async () => {
       await newSetup();
-      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
       await userEvent.click(button);
       expect(emailInput).not.toHaveTextContent;
       expect(passwordInput).not.toHaveTextContent;

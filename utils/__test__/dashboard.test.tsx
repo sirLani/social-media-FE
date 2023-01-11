@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '../../helpers/test-utils';
-import Dashboard from '../user/dashboard';
+import Dashboard from '../../pages/user/dashboard';
 import userEvent from '@testing-library/user-event';
 
 jest.mock('next/router', () => ({

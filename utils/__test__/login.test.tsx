@@ -18,7 +18,6 @@ jest.mock('next/router', () => ({
 const setup = () => {
   render(<Login />);
 };
-
 describe('Login', () => {
   describe('implementation', () => {
     it('renders login header', () => {

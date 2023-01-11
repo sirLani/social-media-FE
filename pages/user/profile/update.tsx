@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Modal } from 'antd';
+import { Modal, Avatar } from 'antd';
 import { UserContext } from '../../../context';
 import { useRouter } from 'next/router';
 import {
@@ -10,7 +10,6 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import styles from '../../../styles/register.module.css';
-import Avatar from 'antd/es/avatar/avatar';
 import { Iimage } from '../../../helpers/helper.types';
 
 const ProfileUpdate = () => {
